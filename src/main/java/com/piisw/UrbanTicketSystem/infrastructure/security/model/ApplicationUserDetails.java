@@ -1,7 +1,7 @@
-package com.piisw.UrbanTicketSystem.authentication;
+package com.piisw.UrbanTicketSystem.infrastructure.security.model;
 
-import com.piisw.UrbanTicketSystem.model.User;
-import com.piisw.UrbanTicketSystem.security.ApplicationUserRole;
+import com.piisw.UrbanTicketSystem.domain.model.User;
+import com.piisw.UrbanTicketSystem.domain.model.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,13 +13,13 @@ public class ApplicationUserDetails implements UserDetails {
 
     private final List<? extends GrantedAuthority> grantedAuthorities;
     private final String password;
-    private final String username;
+    private final String email;
     private final boolean active;
 
     public ApplicationUserDetails(User userModel) {
-        this.username = userModel.getUsername();
+        this.email = userModel.getEmail();
         this.password = userModel.getPassword();
-        this.grantedAuthorities = new ArrayList<>(Enum.valueOf(ApplicationUserRole.class, userModel.getRole()).getGrantedAuthorities());
+        this.grantedAuthorities = new ArrayList<>(Enum.valueOf(UserRole.class, userModel.getRole()).getGrantedAuthorities());
         this.active = userModel.isActive();
     }
 
@@ -35,7 +35,7 @@ public class ApplicationUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

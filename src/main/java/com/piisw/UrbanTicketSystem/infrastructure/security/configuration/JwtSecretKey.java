@@ -1,5 +1,6 @@
-package com.piisw.UrbanTicketSystem.jwt;
+package com.piisw.UrbanTicketSystem.infrastructure.security.configuration;
 
+import com.piisw.UrbanTicketSystem.infrastructure.security.jwt.JwtConfig;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

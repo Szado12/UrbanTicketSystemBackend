@@ -1,6 +1,7 @@
-package com.piisw.UrbanTicketSystem.jwt;
+package com.piisw.UrbanTicketSystem.infrastructure.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.piisw.UrbanTicketSystem.infrastructure.security.model.UsernamePasswordAuthRequest;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +38,7 @@ public class JwtUsernamePasswordAuthFilter extends UsernamePasswordAuthenticatio
             UsernamePasswordAuthRequest authenticationRequest = new ObjectMapper().readValue(request.getInputStream(), UsernamePasswordAuthRequest.class);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getUsername(),
+                    authenticationRequest.getEmail(),
                     authenticationRequest.getPassword()
             );
 

@@ -1,7 +1,7 @@
-package com.piisw.UrbanTicketSystem.jwt;
+package com.piisw.UrbanTicketSystem.infrastructure.security.jwt;
 
-import com.piisw.UrbanTicketSystem.model.User;
-import com.piisw.UrbanTicketSystem.repository.UserRepository;
+import com.piisw.UrbanTicketSystem.domain.model.User;
+import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -53,7 +53,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             Claims body = claimsJws.getBody();
             String username = body.getSubject();
-            Optional<User> user=userRepository.findByUsername(username);
+            Optional<User> user=userRepository.findByEmail(username);
             if (user.isPresent()){
                 Long id = user.get().getId();
                 httpServletRequest.setAttribute("id", id);

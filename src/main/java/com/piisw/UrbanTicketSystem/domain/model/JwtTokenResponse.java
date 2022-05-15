@@ -1,4 +1,4 @@
-package com.piisw.UrbanTicketSystem.jwt;
+package com.piisw.UrbanTicketSystem.domain.model;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -10,5 +10,5 @@ public class JwtTokenResponse {
 
     @NonNull
     private String accessToken;
-    private String tokenType = "Bearer";
+    private String tokenType = "Bearer ";
 }
