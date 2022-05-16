@@ -1,4 +1,4 @@
-package com.piisw.UrbanTicketSystem.infrastructure.security.model;
+package com.piisw.UrbanTicketSystem.domain.model.security;
 
 import com.piisw.UrbanTicketSystem.domain.model.User;
 import com.piisw.UrbanTicketSystem.domain.model.UserRole;

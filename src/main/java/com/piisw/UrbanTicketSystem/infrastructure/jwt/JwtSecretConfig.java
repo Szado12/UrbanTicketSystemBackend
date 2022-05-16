@@ -1,6 +1,5 @@
-package com.piisw.UrbanTicketSystem.infrastructure.security.configuration;
+package com.piisw.UrbanTicketSystem.infrastructure.jwt;
 
-import com.piisw.UrbanTicketSystem.infrastructure.security.jwt.JwtConfig;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -11,12 +10,12 @@ import javax.crypto.SecretKey;
 
 @Configuration
 @EnableConfigurationProperties(JwtConfig.class)
-public class JwtSecretKey {
+public class JwtSecretConfig {
 
     private final JwtConfig jwtConfig;
 
     @Autowired
-    public JwtSecretKey(JwtConfig jwtConfig) {
+    public JwtSecretConfig(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
     }
 

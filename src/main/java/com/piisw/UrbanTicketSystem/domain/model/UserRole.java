@@ -10,8 +10,8 @@ import static com.piisw.UrbanTicketSystem.domain.model.UserPermission.*;
 
 public enum UserRole {
     CLIENT(Sets.newHashSet(CLIENT_READ, CLIENT_WRITE)),
-    //OAUTH_CLIENT(Sets.newHashSet(CLIENT_READ, CLIENT_WRITE, RESERVATION_READ, RESERVATION_WRITE)),
-    //PREREGISTERED_CLIENT(Sets.newHashSet(CLIENT_READ, CLIENT_WRITE)),
+    OAUTH_CLIENT(Sets.newHashSet(CLIENT_READ, CLIENT_WRITE)),
+    PREREGISTERED_CLIENT(Sets.newHashSet(CLIENT_READ, CLIENT_WRITE)),
     STAFF(Sets.newHashSet(CLIENT_READ)),
     ADMIN(Sets.newHashSet());
 

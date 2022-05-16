@@ -1,7 +1,7 @@
 package com.piisw.UrbanTicketSystem.infrastructure.security.configuration;
 
 import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
-import com.piisw.UrbanTicketSystem.infrastructure.security.jwt.JwtConfig;
+import com.piisw.UrbanTicketSystem.infrastructure.jwt.JwtConfig;
 import com.piisw.UrbanTicketSystem.infrastructure.security.jwt.JwtTokenVerifier;
 import com.piisw.UrbanTicketSystem.infrastructure.security.jwt.JwtUsernamePasswordAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,7 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.crypto.SecretKey;
 
-import static com.piisw.UrbanTicketSystem.domain.model.UserPermission.CLIENT_WRITE;
+import static com.piisw.UrbanTicketSystem.domain.model.UserPermission.CLIENT_READ;
 import static com.piisw.UrbanTicketSystem.domain.model.UserRole.*;
 
 @Configuration
@@ -60,7 +59,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(new JwtTokenVerifier(jwtConfig, secretKey, userRepository), JwtUsernamePasswordAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/healthcheck", "/register", "/swagger-ui.html", "/login").permitAll()
-                .antMatchers("/userPanel").hasRole(CLIENT.name())
+                .antMatchers("/userPanel").hasAuthority(CLIENT_READ.name())
                 .antMatchers("/workerPanel").hasRole(STAFF.name())
                 .antMatchers("/adminPanel").hasRole(ADMIN.name())
                 .anyRequest()

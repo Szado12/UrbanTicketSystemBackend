@@ -2,6 +2,7 @@ package com.piisw.UrbanTicketSystem.infrastructure.security.jwt;
 
 import com.piisw.UrbanTicketSystem.domain.model.User;
 import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
+import com.piisw.UrbanTicketSystem.infrastructure.jwt.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;

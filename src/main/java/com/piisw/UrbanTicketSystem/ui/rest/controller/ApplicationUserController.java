@@ -1,50 +1,42 @@
 package com.piisw.UrbanTicketSystem.ui.rest.controller;
 
 
-import com.piisw.UrbanTicketSystem.domain.port.SecurityRepository;
-import com.piisw.UrbanTicketSystem.infrastructure.security.adapter.ApplicationUserService;
-import com.piisw.UrbanTicketSystem.domain.model.JwtTokenResponse;
-import com.piisw.UrbanTicketSystem.domain.model.UserRole;
-import com.piisw.UrbanTicketSystem.infrastructure.security.model.UsernamePasswordAuthRequest;
-import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
-import com.piisw.UrbanTicketSystem.infrastructure.security.jwt.JwtTokenProvider;
 import com.piisw.UrbanTicketSystem.domain.model.User;
-import net.minidev.json.JSONObject;
+import com.piisw.UrbanTicketSystem.domain.model.UserRole;
+import com.piisw.UrbanTicketSystem.domain.port.OAuthRepository;
+import com.piisw.UrbanTicketSystem.domain.port.SecurityRepository;
+import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class ApplicationUserController {
-    private final UserRepository userRepository;
     private final SecurityRepository securityRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final ApplicationUserService applicationUserService;
+    private final OAuthRepository oAuthRepository;
+    private final UserRepository userRepository;
+
 
     @Autowired
-    public ApplicationUserController(UserRepository userRepository, SecurityRepository securityRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager, ApplicationUserService applicationUserService) {
-        this.userRepository = userRepository;
+    public ApplicationUserController(SecurityRepository securityRepository, OAuthRepository oAuthRepository, UserRepository userRepository) {
         this.securityRepository = securityRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.applicationUserService = applicationUserService;
+        this.oAuthRepository = oAuthRepository;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/register")
     ResponseEntity<Object> register(@RequestBody User newUser) {
         return new ResponseEntity<>(securityRepository.registerUser(newUser, UserRole.CLIENT), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/facebook/login")
+    public  ResponseEntity<?> facebookAuth(@RequestBody HttpServletRequest request) {
+        return ResponseEntity.ok(oAuthRepository.authorizeUser(request));
     }
 }

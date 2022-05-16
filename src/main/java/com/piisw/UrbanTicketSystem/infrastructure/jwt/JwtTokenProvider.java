@@ -1,4 +1,4 @@
-package com.piisw.UrbanTicketSystem.infrastructure.security.jwt;
+package com.piisw.UrbanTicketSystem.infrastructure.jwt;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;

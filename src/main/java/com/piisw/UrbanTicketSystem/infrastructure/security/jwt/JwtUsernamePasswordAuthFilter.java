@@ -1,6 +1,7 @@
 package com.piisw.UrbanTicketSystem.infrastructure.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.piisw.UrbanTicketSystem.infrastructure.jwt.JwtConfig;
 import com.piisw.UrbanTicketSystem.infrastructure.security.model.UsernamePasswordAuthRequest;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class JwtUsernamePasswordAuthFilter extends UsernamePasswordAuthenticatio
                 .setSubject(authResult.getName())
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
                 .compact();
 
