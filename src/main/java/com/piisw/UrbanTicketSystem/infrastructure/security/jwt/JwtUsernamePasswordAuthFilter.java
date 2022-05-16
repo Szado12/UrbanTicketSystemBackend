@@ -34,11 +34,12 @@ public class JwtUsernamePasswordAuthFilter extends UsernamePasswordAuthenticatio
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        System.out.println("attempt auth");
         try {
             UsernamePasswordAuthRequest authenticationRequest = new ObjectMapper().readValue(request.getInputStream(), UsernamePasswordAuthRequest.class);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getEmail(),
+                    authenticationRequest.getUsername(),
                     authenticationRequest.getPassword()
             );
 

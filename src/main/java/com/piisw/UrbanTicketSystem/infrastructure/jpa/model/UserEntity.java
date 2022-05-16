@@ -17,7 +17,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     //Account fields
-    private String email;
+    private String username;
     private String password;
     private String role;
     private boolean active;

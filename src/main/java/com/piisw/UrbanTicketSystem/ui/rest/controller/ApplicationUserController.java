@@ -45,15 +45,6 @@ public class ApplicationUserController {
 
     @PostMapping("/register")
     ResponseEntity<Object> register(@RequestBody User newUser) {
-        Optional<User> checkUsername = userRepository.findByEmail(newUser.getEmail());
-        if (checkUsername.isPresent())
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        else {
-            String unHashedPassword= newUser.getPassword();
-            newUser.setPassword(passwordEncoder.encode(unHashedPassword));
-            newUser.setActive(true);
-            newUser.setRole("CLIENT");
-            return new ResponseEntity<>(securityRepository.registerUser(newUser, UserRole.CLIENT), HttpStatus.CREATED);
-        }
+        return new ResponseEntity<>(securityRepository.registerUser(newUser, UserRole.CLIENT), HttpStatus.CREATED);
     }
-    }
+}

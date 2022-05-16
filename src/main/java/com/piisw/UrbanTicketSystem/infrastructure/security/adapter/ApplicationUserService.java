@@ -34,32 +34,25 @@ public class ApplicationUserService implements UserDetailsService, SecurityRepos
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> foundUser = userRepository.findByEmail(username);
+        Optional<User> foundUser = userRepository.findByUsername(username);
         if (foundUser.isPresent())
             return new ApplicationUserDetails(foundUser.get());
         else
             throw new UsernameNotFoundException(String.format("Username %s not found", username));
     }
 
-    public String loginUser(String username, String password) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
-        return tokenProvider.generateToken(authentication);
-    }
-
     public User registerUser(User user, UserRole role) {
         System.out.println("registering user");
         User newUser=new User();
 
-        if(userRepository.existsByEmail(user.getEmail())) {
+        if(userRepository.existsByUsername(user.getUsername())) {
             System.out.println("email already in use.");
 
             throw new RuntimeException(
-                    String.format("email %s already in use", user.getEmail()));
+                    String.format("email %s already in use", user.getUsername()));
         }
 
-        newUser.setEmail(user.getEmail());
+        newUser.setUsername(user.getUsername());
         newUser.setName(user.getName());
         newUser.setSurname(user.getSurname());
         newUser.setActive(true);

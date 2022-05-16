@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class User {
     //Account fields
     private long id;
-    private String email;
+    private String username;
     private String password;
     private String role;
     private boolean active;

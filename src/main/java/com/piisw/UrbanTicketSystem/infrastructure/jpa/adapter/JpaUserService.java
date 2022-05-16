@@ -28,8 +28,8 @@ public class JpaUserService implements UserRepository {
 
     @SneakyThrows
     @Override
-    public Optional<User> findByEmail(String email) {
-        return Optional.ofNullable(mapEntityToUser(userRepository.findByEmail(email).orElse(null)));
+    public Optional<User> findByUsername(String username) {
+        return Optional.ofNullable(mapEntityToUser(userRepository.findByUsername(username).orElse(null)));
     }
 
     @SneakyThrows
@@ -39,8 +39,8 @@ public class JpaUserService implements UserRepository {
     }
 
     @Override
-    public Boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public Boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class JpaUserService implements UserRepository {
             return null;
         return User.builder()
                 .id(userEntity.getId())
-                .email(userEntity.getEmail())
+                .username(userEntity.getUsername())
                 .name(userEntity.getName())
                 .surname(userEntity.getSurname())
                 .password(userEntity.getPassword())
@@ -65,7 +65,7 @@ public class JpaUserService implements UserRepository {
     private UserEntity mapUserToEntity(User user) {
         return UserEntity.builder()
                 .id(user.getId())
-                .email(user.getEmail())
+                .username(user.getUsername())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .password(user.getPassword())

@@ -52,20 +52,19 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .cors().and()
+                .addFilter(new JwtUsernamePasswordAuthFilter(authenticationManager(), jwtConfig, secretKey))
+                .addFilterAfter(new JwtTokenVerifier(jwtConfig, secretKey, userRepository), JwtUsernamePasswordAuthFilter.class)
                 .authorizeRequests()
-                .antMatchers("/login*").permitAll()
-                .antMatchers("/", "/home", "/healthcheck", "/register", "/swagger-ui.html").permitAll()
-                .antMatchers("/facebook/registrationdetails").hasRole(CLIENT.name())
+                .antMatchers("/", "/home", "/healthcheck", "/register", "/swagger-ui.html", "/login").permitAll()
                 .antMatchers("/userPanel").hasRole(CLIENT.name())
                 .antMatchers("/workerPanel").hasRole(STAFF.name())
                 .antMatchers("/adminPanel").hasRole(ADMIN.name())
-                .antMatchers(HttpMethod.GET, "/profile").hasAnyRole(CLIENT.name(), STAFF.name())
-                .antMatchers(HttpMethod.POST, "/profile", "/updateProfile").hasAuthority(CLIENT_WRITE.getPermission())
-                .and().cors().and()
-                .addFilter(new JwtUsernamePasswordAuthFilter(authenticationManager(), jwtConfig, secretKey))
-                .addFilterAfter(new JwtTokenVerifier(jwtConfig, secretKey, userRepository), JwtUsernamePasswordAuthFilter.class)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().csrf().disable();
+                .anyRequest()
+                .authenticated();
     }
 
     @Bean

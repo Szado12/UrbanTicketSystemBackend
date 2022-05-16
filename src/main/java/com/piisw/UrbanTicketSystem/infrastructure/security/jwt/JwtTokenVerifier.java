@@ -53,7 +53,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             Claims body = claimsJws.getBody();
             String username = body.getSubject();
-            Optional<User> user=userRepository.findByEmail(username);
+            Optional<User> user=userRepository.findByUsername(username);
             if (user.isPresent()){
                 Long id = user.get().getId();
                 httpServletRequest.setAttribute("id", id);
