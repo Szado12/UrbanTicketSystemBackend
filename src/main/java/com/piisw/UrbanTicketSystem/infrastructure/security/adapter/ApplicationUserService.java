@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -56,6 +57,7 @@ public class ApplicationUserService implements UserDetailsService, SecurityRepos
         newUser.setActive(true);
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setRole(role.name());
+        newUser.setTickets(new ArrayList<>());
 
         return userRepository.save(newUser);
     }

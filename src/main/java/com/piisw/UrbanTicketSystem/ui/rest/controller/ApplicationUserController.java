@@ -9,10 +9,7 @@ import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,7 +18,6 @@ public class ApplicationUserController {
     private final SecurityRepository securityRepository;
     private final OAuthRepository oAuthRepository;
     private final UserRepository userRepository;
-
 
     @Autowired
     public ApplicationUserController(SecurityRepository securityRepository, OAuthRepository oAuthRepository, UserRepository userRepository) {
@@ -38,5 +34,10 @@ public class ApplicationUserController {
     @PostMapping("/facebook/login")
     public  ResponseEntity<?> facebookAuth(@RequestBody HttpServletRequest request) {
         return ResponseEntity.ok(oAuthRepository.authorizeUser(request));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<Object> getUserProfile(@RequestAttribute Long id) {
+        return new ResponseEntity<>(userRepository.findById(id), HttpStatus.OK);
     }
 }
