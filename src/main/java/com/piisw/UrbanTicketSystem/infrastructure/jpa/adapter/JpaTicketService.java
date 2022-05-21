@@ -30,6 +30,7 @@ public class JpaTicketService implements TicketRepository {
                 .id(ticketEntity.getId())
                 .boughtTime(ticketEntity.getBoughtTime())
                 .validatedTime(ticketEntity.getValidatedTime())
+                .validatedInBus(ticketEntity.getValidatedInBus())
                 .status(ticketEntity.getStatus())
                 .type(mapTicketTypeEntityToTicketType(ticketEntity.getType()))
                 .build();
@@ -42,6 +43,7 @@ public class JpaTicketService implements TicketRepository {
                 .id(ticket.getId())
                 .boughtTime(ticket.getBoughtTime())
                 .validatedTime(ticket.getValidatedTime())
+                .validatedInBus(ticket.getValidatedInBus())
                 .status(ticket.getStatus())
                 .type(mapTicketTypeToTicketTypeEntity(ticket.getType()))
                 .build();

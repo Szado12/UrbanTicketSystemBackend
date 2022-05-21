@@ -35,7 +35,7 @@ public class FacebookService implements OAuthRepository {
         String token = loginUser(facebookLoginRequest.getAccessToken());
         String name = getName(facebookLoginRequest.getAccessToken());
         String surname = getSurname(facebookLoginRequest.getAccessToken());
-        return String.format("{ token: %s, registration: %s, name: %s, surname: %s}", token, firstRegistration ? 1 : 0, name, surname);
+        return String.format("{ \"token\": \"%s\", \"registration\": \"%s\", \"name\": \"%s\", \"surname\": \"%s\"}", "Bearer "+token, firstRegistration ? 1 : 0, name, surname);
     }
 
     private String loginUser(String fbAccessToken) {

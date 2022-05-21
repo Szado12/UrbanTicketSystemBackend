@@ -15,6 +15,7 @@ public class Ticket{
     private long id;
     private LocalDateTime boughtTime;
     private LocalDateTime validatedTime;
+    private int validatedInBus;
     private String status;
     private TicketType type;
 }

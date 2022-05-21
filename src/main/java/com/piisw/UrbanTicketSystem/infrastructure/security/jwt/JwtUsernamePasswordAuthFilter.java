@@ -1,6 +1,8 @@
 package com.piisw.UrbanTicketSystem.infrastructure.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.piisw.UrbanTicketSystem.domain.model.User;
+import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
 import com.piisw.UrbanTicketSystem.infrastructure.jwt.JwtConfig;
 import com.piisw.UrbanTicketSystem.infrastructure.security.model.UsernamePasswordAuthRequest;
 import io.jsonwebtoken.Jwts;
@@ -25,12 +27,14 @@ public class JwtUsernamePasswordAuthFilter extends UsernamePasswordAuthenticatio
     private final AuthenticationManager authenticationManager;
     private final JwtConfig jwtConfig;
     private final SecretKey secretKey;
+    private final UserRepository userRepository;
 
     @Autowired
-    public JwtUsernamePasswordAuthFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey) {
+    public JwtUsernamePasswordAuthFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey, UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtConfig = jwtConfig;
         this.secretKey = secretKey;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -62,8 +66,9 @@ public class JwtUsernamePasswordAuthFilter extends UsernamePasswordAuthenticatio
                 .signWith(secretKey)
                 .compact();
 
+        User user = userRepository.findByUsername(authResult.getName()).get();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("{\"token\":\"" + jwtConfig.getTokenPrefix()+token+"\"}");
+        response.getWriter().write(String.format("{\"token\":\"%s\", \"registration\": 0, \"name\": \"%s\", \"surname\": \"%s\"}", jwtConfig.getTokenPrefix()+token, user.getName(), user.getSurname()));
     }
 }
