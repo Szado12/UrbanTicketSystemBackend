@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TicketType {
+public class TicketCategory {
     private long id;
-    private long price;
-    private boolean reduced;
-    private TicketCategory category;
-    private int minutesOfValidity;
-    private int daysOfValidity;
+    private String name;
 }

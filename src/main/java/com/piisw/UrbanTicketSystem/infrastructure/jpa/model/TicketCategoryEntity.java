@@ -5,20 +5,16 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ticket_types")
+@Table(name = "ticket_categories")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class TicketTypeEntity {
+public class TicketCategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private long price;
-    private boolean reduced;
-    @ManyToOne
-    private TicketCategoryEntity category;
-    private int minutesOfValidity;
-    private int daysOfValidity;
+
+    private String name;
 }

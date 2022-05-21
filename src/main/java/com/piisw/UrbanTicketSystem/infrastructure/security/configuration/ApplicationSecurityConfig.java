@@ -55,7 +55,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .cors().and()
-                .addFilter(new JwtUsernamePasswordAuthFilter(authenticationManager(), jwtConfig, secretKey))
+                .addFilter(new JwtUsernamePasswordAuthFilter(authenticationManager(), jwtConfig, secretKey, userRepository))
                 .addFilterAfter(new JwtTokenVerifier(jwtConfig, secretKey, userRepository), JwtUsernamePasswordAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/healthcheck", "/register", "/swagger-ui.html", "/login", "/facebook/login").permitAll()
