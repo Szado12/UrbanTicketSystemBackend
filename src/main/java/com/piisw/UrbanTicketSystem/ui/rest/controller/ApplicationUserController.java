@@ -6,12 +6,11 @@ import com.piisw.UrbanTicketSystem.domain.model.UserRole;
 import com.piisw.UrbanTicketSystem.domain.port.OAuthRepository;
 import com.piisw.UrbanTicketSystem.domain.port.SecurityRepository;
 import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
+import com.piisw.UrbanTicketSystem.domain.model.security.FacebookLoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class ApplicationUserController {
@@ -32,7 +31,7 @@ public class ApplicationUserController {
     }
 
     @PostMapping("/facebook/login")
-    public  ResponseEntity<?> facebookAuth(@RequestBody HttpServletRequest request) {
+    public  ResponseEntity<?> facebookAuth(@RequestBody FacebookLoginRequest request) {
         return ResponseEntity.ok(oAuthRepository.authorizeUser(request));
     }
 

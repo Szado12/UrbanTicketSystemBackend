@@ -1,7 +1,6 @@
 package com.piisw.UrbanTicketSystem.infrastructure.oauth.facebook.adapter;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.piisw.UrbanTicketSystem.domain.model.User;
 import com.piisw.UrbanTicketSystem.domain.model.UserRole;
 import com.piisw.UrbanTicketSystem.domain.model.security.ApplicationUserDetails;
@@ -10,15 +9,12 @@ import com.piisw.UrbanTicketSystem.domain.port.SecurityRepository;
 import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
 import com.piisw.UrbanTicketSystem.infrastructure.jwt.JwtTokenProvider;
 import com.piisw.UrbanTicketSystem.infrastructure.oauth.facebook.client.FacebookClient;
-import com.piisw.UrbanTicketSystem.infrastructure.oauth.facebook.model.FacebookLoginRequest;
+import com.piisw.UrbanTicketSystem.domain.model.security.FacebookLoginRequest;
 import com.piisw.UrbanTicketSystem.infrastructure.oauth.facebook.model.FacebookUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
 
@@ -34,18 +30,12 @@ public class FacebookService implements OAuthRepository {
     private JwtTokenProvider tokenProvider;
 
     @Override
-    public String authorizeUser(HttpServletRequest request) {
-        try {
-            FacebookLoginRequest facebookLoginRequest = new ObjectMapper().readValue(request.getInputStream(), FacebookLoginRequest.class);
-            boolean firstRegistration = userFirstRegistration(facebookLoginRequest.getAccessToken());
-            String token = loginUser(facebookLoginRequest.getAccessToken());
-            String name = getName(facebookLoginRequest.getAccessToken());
-            String surname = getSurname(facebookLoginRequest.getAccessToken());
-            return String.format("{ token: %s, registration: %s, name: %s, surname: %s}", token, name, surname, firstRegistration? 1 : 0);
-        } catch (
-                IOException e) {
-            throw new RuntimeException(e);
-        }
+    public String authorizeUser(FacebookLoginRequest facebookLoginRequest) {
+        boolean firstRegistration = userFirstRegistration(facebookLoginRequest.getAccessToken());
+        String token = loginUser(facebookLoginRequest.getAccessToken());
+        String name = getName(facebookLoginRequest.getAccessToken());
+        String surname = getSurname(facebookLoginRequest.getAccessToken());
+        return String.format("{ token: %s, registration: %s, name: %s, surname: %s}", token, firstRegistration ? 1 : 0, name, surname);
     }
 
     private String loginUser(String fbAccessToken) {

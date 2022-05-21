@@ -1,4 +1,4 @@
-package com.piisw.UrbanTicketSystem.infrastructure.oauth.facebook.model;
+package com.piisw.UrbanTicketSystem.domain.model.security;
 
 import lombok.*;
 
