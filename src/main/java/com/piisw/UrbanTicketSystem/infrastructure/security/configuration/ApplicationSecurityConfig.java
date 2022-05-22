@@ -4,6 +4,7 @@ import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
 import com.piisw.UrbanTicketSystem.infrastructure.jwt.JwtConfig;
 import com.piisw.UrbanTicketSystem.infrastructure.security.jwt.JwtTokenVerifier;
 import com.piisw.UrbanTicketSystem.infrastructure.security.jwt.JwtUsernamePasswordAuthFilter;
+import org.bouncycastle.jcajce.provider.asymmetric.rsa.AlgorithmParametersSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,7 +60,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(new JwtTokenVerifier(jwtConfig, secretKey, userRepository), JwtUsernamePasswordAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/healthcheck", "/register", "/swagger-ui.html", "/login", "/facebook/login").permitAll()
-                .antMatchers("/profile", "/userPanel", "/ticket").hasRole(CLIENT.name())
+                .antMatchers("/profile", "/userPanel", "/ticket").hasAnyRole(CLIENT.name(), OAUTH_CLIENT.name())
                 .antMatchers("/workerPanel").hasRole(STAFF.name())
                 .antMatchers("/adminPanel").hasRole(ADMIN.name())
                 .anyRequest()
