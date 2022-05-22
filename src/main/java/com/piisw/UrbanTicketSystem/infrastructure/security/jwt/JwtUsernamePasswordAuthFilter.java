@@ -69,6 +69,6 @@ public class JwtUsernamePasswordAuthFilter extends UsernamePasswordAuthenticatio
         User user = userRepository.findByUsername(authResult.getName()).get();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(String.format("{\"token\":\"%s\", \"registration\": 0, \"name\": \"%s\", \"surname\": \"%s\"}", jwtConfig.getTokenPrefix()+token, user.getName(), user.getSurname()));
+        response.getWriter().write(String.format("{\"token\":\"%s\", \"role\": \"%s\", \"registration\": 0, \"name\": \"%s\", \"surname\": \"%s\"}", jwtConfig.getTokenPrefix()+token, user.getRole(), user.getName(), user.getSurname()));
     }
 }
