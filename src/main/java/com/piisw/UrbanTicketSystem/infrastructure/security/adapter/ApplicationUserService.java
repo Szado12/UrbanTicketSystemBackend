@@ -40,6 +40,7 @@ public class ApplicationUserService implements UserDetailsService, SecurityRepos
             throw new UsernameNotFoundException(String.format("Username %s not found", username));
     }
 
+    @Override
     public User registerUser(User user, UserRole role) {
         System.out.println("registering user");
         User newUser=new User();
