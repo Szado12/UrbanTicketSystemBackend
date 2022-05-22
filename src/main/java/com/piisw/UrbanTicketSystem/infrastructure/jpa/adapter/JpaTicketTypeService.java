@@ -54,6 +54,7 @@ public class JpaTicketTypeService implements TicketTypeRepository {
                 .category(mapTicketCategoryEntityToTicketCategory(ticketTypeEntity.getCategory()))
                 .minutesOfValidity(ticketTypeEntity.getMinutesOfValidity())
                 .daysOfValidity(ticketTypeEntity.getDaysOfValidity())
+                .reduced(ticketTypeEntity.isReduced())
                 .build();
     }
 
@@ -66,6 +67,7 @@ public class JpaTicketTypeService implements TicketTypeRepository {
                 .category(mapTicketCategoryToTicketCategoryEntity(ticketType.getCategory()))
                 .minutesOfValidity(ticketType.getMinutesOfValidity())
                 .daysOfValidity(ticketType.getDaysOfValidity())
+                .reduced(ticketType.isReduced())
                 .build();
     }
 
