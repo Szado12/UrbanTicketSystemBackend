@@ -26,6 +26,11 @@ public class TicketController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping("/ticket")
+    public ResponseEntity<Object> getTicket(@RequestParam long ticketId) {
+        return new ResponseEntity<>(ticketRepository.findById(ticketId), HttpStatus.OK);
+    }
+
     @PostMapping("/ticket")
     public ResponseEntity<Object> buyTicket(@RequestAttribute Long id, @RequestParam long ticketTypeId) {
         Ticket ticket = new Ticket();

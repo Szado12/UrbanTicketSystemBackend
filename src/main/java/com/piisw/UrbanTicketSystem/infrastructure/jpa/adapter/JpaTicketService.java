@@ -21,6 +21,11 @@ public class JpaTicketService implements TicketRepository {
     }
 
     @Override
+    public Ticket findById(long id) {
+        return mapTicketEntityToTicket(jpaTicketRepository.findById(id).get());
+    }
+
+    @Override
     public Ticket save(Ticket ticket) {
         return mapTicketEntityToTicket(jpaTicketRepository.save(mapTicketToTicketEntity(ticket)));
     }
