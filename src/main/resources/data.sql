@@ -3,9 +3,9 @@ insert ignore into ticket_categories(id, name)
         (1, 'SINGLE_TICKET'),
         (2, 'TIME_TICKET'),
         (3, 'PERIOD_TICKET')
-    as new
+    /*as new
     on duplicate key update
-        name=new.name;
+        name=new.name*/;
 
 insert ignore into ticket_types(id, days_of_validity, minutes_of_validity, price, reduced, category_id)
     values
@@ -35,27 +35,27 @@ insert ignore into ticket_types(id, days_of_validity, minutes_of_validity, price
          (24, 0, 180, 56000, 0, 3),
          (25, 0, 365, 52500, 1, 3),
          (26, 0, 365, 105000, 0, 3)
-    as new
+    /*as new
     on duplicate key update
         days_of_validity=new.days_of_validity,
         minutes_of_validity=new.minutes_of_validity,
         price=new.price,
         reduced=new.reduced,
-        category_id=new.category_id;
+        category_id=new.category_id*/;
 
 insert ignore into users(id, active, name, password, role, surname, username)
     values
         (1, 1, 'Jan', '$2a$10$7rJ9h.ExpmpdQczWEXdFGu6k7EIl9y/1ebTG/A2sa577uvJjoq926', 'ADMIN', 'Lewandowski', 'admin@gmail.com'),
         (2, 1, 'Anna', '$2a$10$7rJ9h.ExpmpdQczWEXdFGu6k7EIl9y/1ebTG/A2sa577uvJjoq926', 'STAFF', 'Kowalska', 'pracownik@gmail.com'),
         (3, 1, 'Krzysztof', '$2a$10$7rJ9h.ExpmpdQczWEXdFGu6k7EIl9y/1ebTG/A2sa577uvJjoq926', 'CLIENT', 'Adamczyk', 'klient@gmail.com')
-    as new
+    /*as new
     on duplicate key update
         active=new.active,
         name=new.name,
         password=new.password,
         role=new.role,
         surname=new.surname,
-        username=new.username;
+        username=new.username*/;
 
 insert into hibernate_sequence(next_val)
 select 30
