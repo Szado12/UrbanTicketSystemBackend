@@ -16,4 +16,5 @@ public class TicketType {
     private TicketCategory category;
     private int minutesOfValidity;
     private int daysOfValidity;
+    private String displayName;
 }

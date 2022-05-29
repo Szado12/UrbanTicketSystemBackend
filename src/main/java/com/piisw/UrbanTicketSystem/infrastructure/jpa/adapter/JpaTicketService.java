@@ -66,6 +66,7 @@ public class JpaTicketService implements TicketRepository {
                 .minutesOfValidity(ticketTypeEntity.getMinutesOfValidity())
                 .daysOfValidity(ticketTypeEntity.getDaysOfValidity())
                 .reduced(ticketTypeEntity.isReduced())
+                .displayName(ticketTypeEntity.getDisplayName())
                 .build();
     }
 
@@ -79,6 +80,7 @@ public class JpaTicketService implements TicketRepository {
                 .minutesOfValidity(ticketType.getMinutesOfValidity())
                 .daysOfValidity(ticketType.getDaysOfValidity())
                 .reduced(ticketType.isReduced())
+                .displayName(ticketType.getDisplayName())
                 .build();
     }
 

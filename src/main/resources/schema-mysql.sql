@@ -22,6 +22,7 @@ create table if not exists ticket_types (
     price               bigint,
     reduced             bit(1),
     category_id         bigint,
+    display_name        varchar(255),
     foreign key (category_id) references ticket_categories(id)
 );
 

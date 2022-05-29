@@ -139,6 +139,7 @@ public class JpaUserService implements UserRepository {
                 .minutesOfValidity(ticketTypeEntity.getMinutesOfValidity())
                 .daysOfValidity(ticketTypeEntity.getDaysOfValidity())
                 .reduced(ticketTypeEntity.isReduced())
+                .displayName(ticketTypeEntity.getDisplayName())
                 .build();
     }
 
@@ -152,6 +153,7 @@ public class JpaUserService implements UserRepository {
                 .minutesOfValidity(ticketType.getMinutesOfValidity())
                 .daysOfValidity(ticketType.getDaysOfValidity())
                 .reduced(ticketType.isReduced())
+                .displayName(ticketType.getDisplayName())
                 .build();
     }
 

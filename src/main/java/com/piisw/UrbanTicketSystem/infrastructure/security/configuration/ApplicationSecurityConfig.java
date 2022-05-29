@@ -61,7 +61,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/healthcheck", "/register", "/swagger-ui.html", "/login", "/facebook/login").permitAll()
                 .antMatchers("/profile", "/userPanel").hasAnyRole(CLIENT.name(), OAUTH_CLIENT.name())
-                .antMatchers(HttpMethod.POST, "/ticket").hasAnyRole(CLIENT.name(), OAUTH_CLIENT.name())
+                .antMatchers(HttpMethod.POST, "/ticket", "tickets").hasAnyRole(CLIENT.name(), OAUTH_CLIENT.name())
                 .antMatchers("/workerPanel").hasRole(STAFF.name())
                 .antMatchers(HttpMethod.GET,"/ticket", "/tickettypes").hasAnyRole(CLIENT.name(), OAUTH_CLIENT.name(), STAFF.name())
                 .antMatchers("/adminPanel").hasRole(ADMIN.name())

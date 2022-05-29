@@ -17,6 +17,7 @@ public class TicketTypeEntity {
     private long id;
     private long price;
     private boolean reduced;
+    private String displayName;
     @ManyToOne
     private TicketCategoryEntity category;
     private int minutesOfValidity;
