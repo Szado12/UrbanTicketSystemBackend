@@ -12,6 +12,7 @@ import com.piisw.UrbanTicketSystem.domain.model.security.FacebookLoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -26,13 +27,16 @@ public class ApplicationUserController {
     private final OAuthRepository oAuthRepository;
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     private final TicketRepository ticketRepository;
 
     @Autowired
-    public ApplicationUserController(SecurityRepository securityRepository, OAuthRepository oAuthRepository, UserRepository userRepository, TicketRepository ticketRepository) {
+    public ApplicationUserController(SecurityRepository securityRepository, OAuthRepository oAuthRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, TicketRepository ticketRepository) {
         this.securityRepository = securityRepository;
         this.oAuthRepository = oAuthRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.ticketRepository = ticketRepository;
     }
 
@@ -79,7 +83,7 @@ public class ApplicationUserController {
     @PutMapping("/profile/password")
     public ResponseEntity<Object> updateUserPassword(@RequestAttribute Long id, @RequestBody User updatedUser) {
         User userToUpdate = userRepository.findById(id).get();
-        userToUpdate.setPassword(updatedUser.getPassword());
+        userToUpdate.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         return new ResponseEntity<>(userRepository.save(userToUpdate), HttpStatus.OK);
     }
 }
