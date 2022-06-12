@@ -28,7 +28,7 @@ jobs:
       # Use mvn clean and package as the standard maven build phase
       - run:
           name: Build and push docker image to heroku
-          command:
+          command: |
             set -x
             sudo curl https://cli-assets.heroku.com/install.sh | sh
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login
