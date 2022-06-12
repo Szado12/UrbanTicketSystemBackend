@@ -57,7 +57,7 @@ insert ignore into users(id, active, name, password, role, surname, username)
         surname=new.surname,
         username=new.username*/;
 
-insert ignore into tickets(id, uuid, bought_time, status, validated_in_bus, validated_time, type_id, user_id)
+insert ignore into tickets(id, uuid, bought_time, ticket_status, validated_in_bus, validated_time, type_id, user_id)
     values
         (1, '990cad72', sysdate(), 'BOUGHT', 0, null, 5, 3),
         (2, '990cce71', sysdate(), 'BOUGHT', 0, null, 9, 3),
