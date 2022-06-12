@@ -23,18 +23,18 @@ insert ignore into ticket_types(id, days_of_validity, minutes_of_validity, price
          (12, 0, 1440, 1500, 0, 2, '24 hours time ticket'),
          (13, 0, 4320, 1600, 1, 2, '72 hours time ticket'),
          (14, 0, 4320, 3200, 0, 2, '72 hours time ticket'),
-         (15, 0, 7, 1900, 1, 3, '7 days season ticket'),
-         (16, 0, 7, 3800, 0, 3, '7 days season ticket'),
-         (17, 0, 30, 4500, 1, 3, '30 days season ticket'),
-         (18, 0, 30, 9000, 0, 3, '30 days season ticket'),
-         (19, 0, 60, 10400, 1, 3, '60 days season ticket'),
-         (20, 0, 60, 20800, 0, 3, '60 days season ticket'),
-         (21, 0, 90, 15100, 1, 3, '90 days season ticket'),
-         (22, 0, 90, 30200, 0, 3, '90 days season ticket'),
-         (23, 0, 180, 28000, 1, 3, '180 days season ticket'),
-         (24, 0, 180, 56000, 0, 3, '180 days season ticket'),
-         (25, 0, 365, 52500, 1, 3, '365 days season ticket'),
-         (26, 0, 365, 105000, 0, 3, '365 days season ticket')
+         (15, 7, 0, 1900, 1, 3, '7 days season ticket'),
+         (16, 7, 0, 3800, 0, 3, '7 days season ticket'),
+         (17, 30, 0, 4500, 1, 3, '30 days season ticket'),
+         (18, 30, 0, 9000, 0, 3, '30 days season ticket'),
+         (19, 60, 0, 10400, 1, 3, '60 days season ticket'),
+         (20, 60, 0, 20800, 0, 3, '60 days season ticket'),
+         (21, 90, 0, 15100, 1, 3, '90 days season ticket'),
+         (22, 90, 0, 30200, 0, 3, '90 days season ticket'),
+         (23, 180, 0, 28000, 1, 3, '180 days season ticket'),
+         (24, 180, 0, 56000, 0, 3, '180 days season ticket'),
+         (25, 365, 0, 52500, 1, 3, '365 days season ticket'),
+         (26, 365, 0, 105000, 0, 3, '365 days season ticket')
     /*as new
     on duplicate key update
         days_of_validity=new.days_of_validity,
@@ -57,11 +57,11 @@ insert ignore into users(id, active, name, password, role, surname, username)
         surname=new.surname,
         username=new.username*/;
 
-insert ignore into tickets(id, bought_time, status, validated_in_bus, validated_time, type_id, user_id)
+insert ignore into tickets(id, uuid, bought_time, status, validated_in_bus, validated_time, type_id, user_id)
     values
-        (1, sysdate(), 'BOUGHT', 0, null, 5, 3),
-        (2, sysdate(), 'BOUGHT', 0, null, 9, 3),
-        (3, sysdate(), 'BOUGHT', 0, null, 14, 3);
+        (1, UUID(), sysdate(), 'BOUGHT', 0, null, 5, 3),
+        (2, UUID(), sysdate(), 'BOUGHT', 0, null, 9, 3),
+        (3, UUID(), sysdate(), 'BOUGHT', 0, null, 14, 3);
 
 insert into hibernate_sequence(next_val)
 select 30

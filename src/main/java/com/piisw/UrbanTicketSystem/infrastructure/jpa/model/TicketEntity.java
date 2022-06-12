@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tickets")
@@ -19,6 +20,7 @@ public class TicketEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    private String uuid;
     @DateTimeFormat
     private LocalDateTime boughtTime;
     @DateTimeFormat

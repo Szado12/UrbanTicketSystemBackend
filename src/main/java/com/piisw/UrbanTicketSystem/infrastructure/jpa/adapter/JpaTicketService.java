@@ -11,6 +11,8 @@ import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaTicketReposi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class JpaTicketService implements TicketRepository {
     private JpaTicketRepository jpaTicketRepository;
@@ -26,6 +28,11 @@ public class JpaTicketService implements TicketRepository {
     }
 
     @Override
+    public Ticket findByUuid(String uuid) {
+        return mapTicketEntityToTicket(jpaTicketRepository.findByUuid(uuid).get());
+    }
+
+    @Override
     public Ticket save(Ticket ticket) {
         return mapTicketEntityToTicket(jpaTicketRepository.save(mapTicketToTicketEntity(ticket)));
     }
@@ -35,6 +42,7 @@ public class JpaTicketService implements TicketRepository {
             return null;
         return Ticket.builder()
                 .id(ticketEntity.getId())
+                .uuid(ticketEntity.getUuid())
                 .boughtTime(ticketEntity.getBoughtTime())
                 .validatedTime(ticketEntity.getValidatedTime())
                 .validatedInBus(ticketEntity.getValidatedInBus())
@@ -48,6 +56,7 @@ public class JpaTicketService implements TicketRepository {
             return null;
         return TicketEntity.builder()
                 .id(ticket.getId())
+                .uuid(ticket.getUuid())
                 .boughtTime(ticket.getBoughtTime())
                 .validatedTime(ticket.getValidatedTime())
                 .validatedInBus(ticket.getValidatedInBus())

@@ -108,6 +108,7 @@ public class JpaUserService implements UserRepository {
             return null;
         return Ticket.builder()
                 .id(ticketEntity.getId())
+                .uuid(ticketEntity.getUuid())
                 .boughtTime(ticketEntity.getBoughtTime())
                 .validatedTime(ticketEntity.getValidatedTime())
                 .validatedInBus(ticketEntity.getValidatedInBus())
@@ -121,6 +122,7 @@ public class JpaUserService implements UserRepository {
             return null;
         return TicketEntity.builder()
                 .id(ticket.getId())
+                .uuid(ticket.getUuid())
                 .boughtTime(ticket.getBoughtTime())
                 .validatedTime(ticket.getValidatedTime())
                 .validatedInBus(ticket.getValidatedInBus())

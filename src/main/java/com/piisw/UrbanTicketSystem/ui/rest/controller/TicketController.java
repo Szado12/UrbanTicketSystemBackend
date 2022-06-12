@@ -3,6 +3,7 @@ package com.piisw.UrbanTicketSystem.ui.rest.controller;
 import com.piisw.UrbanTicketSystem.domain.model.Ticket;
 import com.piisw.UrbanTicketSystem.domain.model.TicketStatus;
 import com.piisw.UrbanTicketSystem.domain.model.User;
+import com.piisw.UrbanTicketSystem.domain.model.request.TicketDetails;
 import com.piisw.UrbanTicketSystem.domain.model.request.TicketsRequest;
 import com.piisw.UrbanTicketSystem.domain.port.TicketRepository;
 import com.piisw.UrbanTicketSystem.domain.port.TicketTypeRepository;
@@ -12,9 +13,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.INVALID;
+import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.VALID;
 
 @RestController
 public class TicketController {
@@ -30,13 +37,29 @@ public class TicketController {
     }
 
     @GetMapping("/ticket")
-    public ResponseEntity<Object> getTicket(@RequestParam long ticketId) {
-        return new ResponseEntity<>(ticketRepository.findById(ticketId), HttpStatus.OK);
+    public ResponseEntity<Object> getTicket(@RequestBody TicketDetails ticketDetails) {
+        Ticket ticket = ticketRepository.findByUuid(ticketDetails.getTicketUuid());
+        if (ticket.getStatus().equals(VALID.name())){
+            Duration duration = Duration.between(ticket.getValidatedTime(), LocalDateTime.now());
+            if (ticket.getType().getMinutesOfValidity() != 0) {
+                if (duration.toMinutes() > ticket.getType().getMinutesOfValidity())
+                    ticket.setStatus(INVALID.name());
+            } else if (ticket.getType().getDaysOfValidity() == 0) {
+                if (duration.toMinutes() > 90)
+                    ticket.setStatus(INVALID.name());
+            } else {
+                if (duration.toDays() > ticket.getType().getDaysOfValidity())
+                    ticket.setStatus(INVALID.name());
+            }
+            ticketRepository.save(ticket);
+        }
+        return new ResponseEntity<>(ticketRepository.findByUuid(ticketDetails.getTicketUuid()), HttpStatus.OK);
     }
 
     @PostMapping("/ticket")
     public ResponseEntity<Object> buyTicket(@RequestAttribute Long id, @RequestParam long ticketTypeId) {
         Ticket ticket = new Ticket();
+        ticket.setUuid(UUID.randomUUID().toString());
         ticket.setStatus(TicketStatus.BOUGHT.toString());
         ticket.setBoughtTime(LocalDateTime.now());
         ticket.setType(ticketTypeRepository.getById(ticketTypeId));
@@ -55,6 +78,7 @@ public class TicketController {
         for (int i = 0; i < ticketTypeIds.size(); i++) {
             for (int j = 0; j < ticketTypeCounts.get(i); j++) {
                 Ticket ticket = new Ticket();
+                ticket.setUuid(UUID.randomUUID().toString());
                 ticket.setStatus(TicketStatus.BOUGHT.toString());
                 ticket.setBoughtTime(LocalDateTime.now());
                 ticket.setType(ticketTypeRepository.getById(ticketTypeIds.get(i)));
@@ -64,5 +88,16 @@ public class TicketController {
             }
         }
         return new ResponseEntity<>(boughtTickets, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/ticket/validate")
+    public ResponseEntity<Object> validateTicket(@RequestBody TicketDetails ticketDetails) {
+        Ticket ticketToValidate = ticketRepository.findByUuid(ticketDetails.getTicketUuid());
+        if (ticketToValidate.getStatus().equals(VALID.name()))
+            throw new IllegalArgumentException("Ticket already validated");
+        ticketToValidate.setValidatedInBus(ticketDetails.getValidatedInBus());
+        ticketToValidate.setStatus(VALID.name());
+        ticketToValidate.setValidatedTime(LocalDateTime.now());
+        return new ResponseEntity<>(ticketRepository.save(ticketToValidate), HttpStatus.OK);
     }
 }

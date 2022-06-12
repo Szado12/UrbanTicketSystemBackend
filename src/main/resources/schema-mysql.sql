@@ -28,6 +28,7 @@ create table if not exists ticket_types (
 
 create table if not exists tickets (
     id                  bigint primary key,
+    uuid                varchar(36) unique,
     bought_time         datetime(6),
     status              varchar(255),
     validated_in_bus    integer,

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Ticket{
     private long id;
+    private String uuid;
     private LocalDateTime boughtTime;
     private LocalDateTime validatedTime;
     private int validatedInBus;
