@@ -51,15 +51,14 @@ public class TicketController {
                 if (duration.toDays() > ticket.getType().getDaysOfValidity())
                     ticket.setStatus(INVALID.name());
             }
-            ticketRepository.save(ticket);
         }
-        return new ResponseEntity<>(ticketRepository.findByUuid(ticketDetails.getTicketUuid()), HttpStatus.OK);
+        return new ResponseEntity<>(ticketRepository.save(ticket), HttpStatus.OK);
     }
 
     @PostMapping("/ticket")
     public ResponseEntity<Object> buyTicket(@RequestAttribute Long id, @RequestParam long ticketTypeId) {
         Ticket ticket = new Ticket();
-        ticket.setUuid(UUID.randomUUID().toString());
+        ticket.setUuid(UUID.randomUUID().toString().substring(0,8));
         ticket.setStatus(TicketStatus.BOUGHT.toString());
         ticket.setBoughtTime(LocalDateTime.now());
         ticket.setType(ticketTypeRepository.getById(ticketTypeId));
@@ -78,7 +77,7 @@ public class TicketController {
         for (int i = 0; i < ticketTypeIds.size(); i++) {
             for (int j = 0; j < ticketTypeCounts.get(i); j++) {
                 Ticket ticket = new Ticket();
-                ticket.setUuid(UUID.randomUUID().toString());
+                ticket.setUuid(UUID.randomUUID().toString().substring(0,8));
                 ticket.setStatus(TicketStatus.BOUGHT.toString());
                 ticket.setBoughtTime(LocalDateTime.now());
                 ticket.setType(ticketTypeRepository.getById(ticketTypeIds.get(i)));
