@@ -112,7 +112,7 @@ public class JpaUserService implements UserRepository {
                 .boughtTime(ticketEntity.getBoughtTime())
                 .validatedTime(ticketEntity.getValidatedTime())
                 .validatedInBus(ticketEntity.getValidatedInBus())
-                .status(ticketEntity.getStatus())
+                .status(ticketEntity.getTicketStatus())
                 .type(mapTicketTypeEntityToTicketType(ticketEntity.getType()))
                 .build();
     }
@@ -126,7 +126,7 @@ public class JpaUserService implements UserRepository {
                 .boughtTime(ticket.getBoughtTime())
                 .validatedTime(ticket.getValidatedTime())
                 .validatedInBus(ticket.getValidatedInBus())
-                .status(ticket.getStatus())
+                .ticketStatus(ticket.getStatus())
                 .type(mapTicketTypeToTicketTypeEntity(ticket.getType()))
                 .build();
     }

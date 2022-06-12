@@ -26,7 +26,7 @@ public class TicketEntity {
     @DateTimeFormat
     private LocalDateTime validatedTime;
     private int validatedInBus;
-    private String status;
+    private String ticketStatus;
     @ManyToOne
     private TicketTypeEntity type;
 }

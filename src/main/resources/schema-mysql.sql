@@ -30,7 +30,7 @@ create table if not exists tickets (
     id                  bigint primary key,
     uuid                varchar(36) unique,
     bought_time         datetime(6),
-    status              varchar(255),
+    ticket_status       varchar(255),
     validated_in_bus    integer,
     validated_time      datetime(6),
     type_id             bigint,
