@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.piisw.UrbanTicketSystem.domain.model.Ticket;
 import com.piisw.UrbanTicketSystem.domain.model.User;
 import com.piisw.UrbanTicketSystem.domain.model.UserRole;
+import com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter.JpaTicketService;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter.JpaUserService;
 import com.piisw.UrbanTicketSystem.infrastructure.jwt.JwtConfig;
 import com.piisw.UrbanTicketSystem.infrastructure.jwt.JwtSecretConfig;
@@ -48,6 +49,9 @@ public class ApplicationUserControllerTests {
 
     @MockBean
     private ApplicationUserService securityService;
+
+    @MockBean
+    private JpaTicketService ticketService;
 
     @MockBean
     private FacebookService facebookService;
