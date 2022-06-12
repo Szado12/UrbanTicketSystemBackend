@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -52,6 +53,9 @@ public class ApplicationUserControllerTests {
 
     @MockBean
     private JpaTicketService ticketService;
+
+    @MockBean
+    private PasswordEncoder passwordEncoder;
 
     @MockBean
     private FacebookService facebookService;
