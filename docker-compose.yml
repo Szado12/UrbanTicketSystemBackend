@@ -26,13 +26,5 @@ services:
     depends_on:
            - "db"
     restart: always
-  frontend:
-    build: ../UrbanTicketSystemFrontend/urban-ticket-system/
-    links:
-           - "backendserver"
-    depends_on:
-           - "backendserver"
-    ports:
-           - "4200:4200"
 volumes:
     my-db:
