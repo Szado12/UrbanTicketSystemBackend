@@ -29,10 +29,10 @@ create table if not exists ticket_types (
 create table if not exists tickets (
     id                  bigint primary key,
     uuid                varchar(36) unique,
-    bought_time         datetime(6),
-    status              varchar(255),
+    bought_time         datetime,
+    ticket_status       varchar(255),
     validated_in_bus    integer,
-    validated_time      datetime(6),
+    validated_time      datetime,
     type_id             bigint,
     user_id             bigint,
     foreign key (type_id) references ticket_types(id),
