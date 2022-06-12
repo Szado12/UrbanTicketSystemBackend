@@ -4,6 +4,7 @@ import com.piisw.UrbanTicketSystem.domain.model.Ticket;
 import com.piisw.UrbanTicketSystem.domain.model.TicketStatus;
 import com.piisw.UrbanTicketSystem.domain.model.User;
 import com.piisw.UrbanTicketSystem.domain.model.request.TicketDetails;
+import com.piisw.UrbanTicketSystem.domain.model.request.TicketValidityResponse;
 import com.piisw.UrbanTicketSystem.domain.model.request.TicketsRequest;
 import com.piisw.UrbanTicketSystem.domain.port.TicketRepository;
 import com.piisw.UrbanTicketSystem.domain.port.TicketTypeRepository;
@@ -98,5 +99,31 @@ public class TicketController {
         ticketToValidate.setStatus(VALID.name());
         ticketToValidate.setValidatedTime(LocalDateTime.now());
         return new ResponseEntity<>(ticketRepository.save(ticketToValidate), HttpStatus.OK);
+    }
+
+    @PutMapping("/ticket/check")
+    public ResponseEntity<Object> getTicket(@RequestBody TicketDetails ticketDetails) {
+        Ticket ticket = ticketRepository.findByUuid(ticketDetails.getTicketUuid());
+        TicketValidityResponse ticketValidityResponse = new TicketValidityResponse(false, false);
+        ticketValidityResponse.setReduced(ticket.getType().isReduced());
+        if (ticket.getStatus().equals(VALID.name())){
+            ticketValidityResponse.setValid(true);
+            Duration duration = Duration.between(ticket.getValidatedTime(), LocalDateTime.now());
+            if (ticket.getType().getMinutesOfValidity() != 0) {
+                if (duration.toMinutes() > ticket.getType().getMinutesOfValidity())
+                    ticket.setStatus(INVALID.name());
+            } else if (ticket.getType().getDaysOfValidity() == 0) {
+                if (duration.toMinutes() > 90)
+                    ticket.setStatus(INVALID.name());
+                if (ticketDetails.getValidatedInBus() != ticket.getValidatedInBus())
+                    ticketValidityResponse.setValid(false);
+            } else {
+                if (duration.toDays() > ticket.getType().getDaysOfValidity())
+                    ticket.setStatus(INVALID.name());
+            }
+        }
+        ticketRepository.save(ticket);
+
+        return new ResponseEntity<>(ticketValidityResponse, HttpStatus.OK);
     }
 }
