@@ -64,7 +64,7 @@ insert ignore into tickets(id, uuid, bought_time, ticket_status, validated_in_bu
         (3, '990cd228', sysdate(), 'BOUGHT', 0, null, 14, 3);
 
 insert into hibernate_sequence(next_val)
-select 30
+select 30 from dual
 where (select count(*) from hibernate_sequence)=0;
 
 update hibernate_sequence set next_val=30 where next_val<30;
