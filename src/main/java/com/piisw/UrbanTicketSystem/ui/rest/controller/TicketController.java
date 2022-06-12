@@ -37,8 +37,8 @@ public class TicketController {
     }
 
     @GetMapping("/ticket")
-    public ResponseEntity<Object> getTicket(@RequestBody TicketDetails ticketDetails) {
-        Ticket ticket = ticketRepository.findByUuid(ticketDetails.getTicketUuid());
+    public ResponseEntity<Object> getTicket(@RequestParam String ticketUuid) {
+        Ticket ticket = ticketRepository.findByUuid(ticketUuid);
         if (ticket.getStatus().equals(VALID.name())){
             Duration duration = Duration.between(ticket.getValidatedTime(), LocalDateTime.now());
             if (ticket.getType().getMinutesOfValidity() != 0) {
