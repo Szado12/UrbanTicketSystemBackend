@@ -65,6 +65,6 @@ insert ignore into tickets(id, uuid, bought_time, ticket_status, validated_in_bu
 
 insert into hibernate_sequence(next_val)
 select 30
-where not exists (select * from hibernate_sequence);
+where (select count(*) from hibernate_sequence)>0;
 
 update hibernate_sequence set next_val=30 where next_val<30;
