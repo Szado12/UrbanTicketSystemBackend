@@ -57,14 +57,14 @@ insert ignore into users(id, active, name, password, role, surname, username)
         surname=new.surname,
         username=new.username*/;
 
-insert ignore into tickets(id, uuid, bought_time, status, validated_in_bus, validated_time, type_id, user_id)
+insert ignore into tickets(id, uuid, bought_time, ticket_status, validated_in_bus, validated_time, type_id, user_id)
     values
         (1, '990cad72', sysdate(), 'BOUGHT', 0, null, 5, 3),
         (2, '990cce71', sysdate(), 'BOUGHT', 0, null, 9, 3),
         (3, '990cd228', sysdate(), 'BOUGHT', 0, null, 14, 3);
 
 insert into hibernate_sequence(next_val)
-select 30
-where not exists (select * from hibernate_sequence);
+select 30 from dual
+where (select count(*) from hibernate_sequence)=0;
 
 update hibernate_sequence set next_val=30 where next_val<30;

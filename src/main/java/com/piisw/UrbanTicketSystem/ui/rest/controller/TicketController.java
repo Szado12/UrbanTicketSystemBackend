@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.INVALID;
@@ -92,13 +93,17 @@ public class TicketController {
 
     @PutMapping("/ticket/validate")
     public ResponseEntity<Object> validateTicket(@RequestBody TicketDetails ticketDetails) {
-        Ticket ticketToValidate = ticketRepository.findByUuid(ticketDetails.getTicketUuid());
-        if (ticketToValidate.getStatus().equals(VALID.name()))
-            throw new IllegalArgumentException("Ticket already validated");
-        ticketToValidate.setValidatedInBus(ticketDetails.getValidatedInBus());
-        ticketToValidate.setStatus(VALID.name());
-        ticketToValidate.setValidatedTime(LocalDateTime.now());
-        return new ResponseEntity<>(ticketRepository.save(ticketToValidate), HttpStatus.OK);
+        try {
+            Ticket ticketToValidate = ticketRepository.findByUuid(ticketDetails.getTicketUuid());
+            if (ticketToValidate.getStatus().equals(VALID.name()))
+                return new ResponseEntity<>("Ticket already validated", HttpStatus.BAD_REQUEST);
+            ticketToValidate.setValidatedInBus(ticketDetails.getValidatedInBus());
+            ticketToValidate.setStatus(VALID.name());
+            ticketToValidate.setValidatedTime(LocalDateTime.now());
+            return new ResponseEntity<>(ticketRepository.save(ticketToValidate), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("No value present", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/ticket/check")
