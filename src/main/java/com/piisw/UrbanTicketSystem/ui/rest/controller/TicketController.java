@@ -41,20 +41,8 @@ public class TicketController {
     @GetMapping("/ticket")
     public ResponseEntity<Object> getTicket(@RequestParam String ticketUuid) {
         Ticket ticket = ticketRepository.findByUuid(ticketUuid);
-        if (ticket.getStatus().equals(VALID.name())){
-            Duration duration = Duration.between(ticket.getValidatedTime(), LocalDateTime.now());
-            if (ticket.getType().getMinutesOfValidity() != 0) {
-                if (duration.toMinutes() > ticket.getType().getMinutesOfValidity())
-                    ticket.setStatus(INVALID.name());
-            } else if (ticket.getType().getDaysOfValidity() == 0) {
-                if (duration.toMinutes() > 90)
-                    ticket.setStatus(INVALID.name());
-            } else {
-                if (duration.toDays() > ticket.getType().getDaysOfValidity())
-                    ticket.setStatus(INVALID.name());
-            }
-        }
-        return new ResponseEntity<>(ticketRepository.save(ticket), HttpStatus.OK);
+        ticketRepository.updateValidity(ticket);
+        return new ResponseEntity<>(ticketRepository.findByUuid(ticketUuid), HttpStatus.OK);
     }
 
     @PostMapping("/ticket")
@@ -111,24 +99,12 @@ public class TicketController {
         Ticket ticket = ticketRepository.findByUuid(ticketDetails.getTicketUuid());
         TicketValidityResponse ticketValidityResponse = new TicketValidityResponse(false, false);
         ticketValidityResponse.setReduced(ticket.getType().isReduced());
-        if (ticket.getStatus().equals(VALID.name())){
+        ticketRepository.updateValidity(ticket);
+        if (ticket.getStatus().equals(VALID.name())) {
             ticketValidityResponse.setValid(true);
-            Duration duration = Duration.between(ticket.getValidatedTime(), LocalDateTime.now());
-            if (ticket.getType().getMinutesOfValidity() != 0) {
-                if (duration.toMinutes() > ticket.getType().getMinutesOfValidity())
-                    ticket.setStatus(INVALID.name());
-            } else if (ticket.getType().getDaysOfValidity() == 0) {
-                if (duration.toMinutes() > 90)
-                    ticket.setStatus(INVALID.name());
-                if (ticketDetails.getValidatedInBus() != ticket.getValidatedInBus())
-                    ticketValidityResponse.setValid(false);
-            } else {
-                if (duration.toDays() > ticket.getType().getDaysOfValidity())
-                    ticket.setStatus(INVALID.name());
-            }
+            if (ticketDetails.getValidatedInBus() != ticket.getValidatedInBus())
+                ticketValidityResponse.setValid(false);
         }
-        ticketRepository.save(ticket);
-
         return new ResponseEntity<>(ticketValidityResponse, HttpStatus.OK);
     }
 }

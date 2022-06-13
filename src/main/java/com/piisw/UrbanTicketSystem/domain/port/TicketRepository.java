@@ -8,4 +8,5 @@ public interface TicketRepository {
     Ticket findById(long id);
     Ticket findByUuid(String uuid);
     Ticket save(Ticket ticket);
+    Ticket updateValidity(Ticket ticket);
 }

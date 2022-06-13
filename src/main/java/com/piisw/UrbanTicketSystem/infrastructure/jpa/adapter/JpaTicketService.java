@@ -11,7 +11,12 @@ import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaTicketReposi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.INVALID;
+import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.VALID;
 
 @Service
 public class JpaTicketService implements TicketRepository {
@@ -35,6 +40,24 @@ public class JpaTicketService implements TicketRepository {
     @Override
     public Ticket save(Ticket ticket) {
         return mapTicketEntityToTicket(jpaTicketRepository.save(mapTicketToTicketEntity(ticket)));
+    }
+
+    @Override
+    public Ticket updateValidity(Ticket ticket) {
+        if (ticket.getStatus().equals(VALID.name())){
+            Duration duration = Duration.between(ticket.getValidatedTime(), LocalDateTime.now());
+            if (ticket.getType().getMinutesOfValidity() != 0) {
+                if (duration.toMinutes() > ticket.getType().getMinutesOfValidity())
+                    ticket.setStatus(INVALID.name());
+            } else if (ticket.getType().getDaysOfValidity() == 0) {
+                if (duration.toMinutes() > 90)
+                    ticket.setStatus(INVALID.name());
+            } else {
+                if (duration.toDays() > ticket.getType().getDaysOfValidity())
+                    ticket.setStatus(INVALID.name());
+            }
+        }
+        return save(ticket);
     }
 
     private Ticket mapTicketEntityToTicket(TicketEntity ticketEntity) {

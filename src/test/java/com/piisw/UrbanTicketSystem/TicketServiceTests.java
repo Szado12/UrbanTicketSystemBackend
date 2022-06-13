@@ -94,39 +94,31 @@ public class TicketServiceTests {
 
     @Test
     public void shouldReturnTicketById() {
-        String username = "user@gmail.com";
-        User testUser = new User();
-        testUser.setUsername("user@gmail.com");
-        testUser.setPassword("1234");
-        testUser.setTickets(new ArrayList<>());
+        LocalDateTime time = LocalDateTime.now();
+        String uuid = "UUID";
+        Ticket testTicket = new Ticket();
+        testTicket.setId(0L);
+        testTicket.setStatus("BOUGHT");
+        testTicket.setValidatedInBus(0);
+        testTicket.setUuid(uuid);
+        testTicket.setBoughtTime(time);
+        testTicket.setValidatedTime(time);
 
-        UserEntity testUserEntity = new UserEntity();
-        testUserEntity.setId(0L);
-        testUserEntity.setUsername("user@gmail.com");
-        testUserEntity.setPassword("1234");
-        testUserEntity.setTickets(new ArrayList<>());
+        TicketEntity testTicketEntity = new TicketEntity();
+        testTicketEntity.setId(0L);
+        testTicketEntity.setTicketStatus("BOUGHT");
+        testTicketEntity.setValidatedInBus(0);
+        testTicketEntity.setUuid(uuid);
+        testTicketEntity.setBoughtTime(time);
+        testTicketEntity.setValidatedTime(time);
 
-        //when(jpaUserRepository.findById(0L)).thenReturn(Optional.of(testUserEntity));
-        //User user = jpaUserService.findById(0L).get();
-        //assertThat(user.getUsername()).isSameAs(testUser.getUsername());
-        //assertThat(user.getPassword()).isSameAs(testUser.getPassword());
-    }
-
-    @Test
-    public void shouldReturnIfExistsByUsername() {
-        String username = "user@gmail.com";
-        User testUser = new User();
-        testUser.setUsername("user@gmail.com");
-        testUser.setPassword("1234");
-        testUser.setTickets(new ArrayList<>());
-
-        UserEntity testUserEntity = new UserEntity();
-        testUserEntity.setId(0L);
-        testUserEntity.setUsername("user@gmail.com");
-        testUserEntity.setPassword("1234");
-        testUserEntity.setTickets(new ArrayList<>());
-
-        //when(jpaUserRepository.existsByUsername(username)).thenReturn(true);
-        //assert(jpaUserService.existsByUsername(username));
+        when(jpaTicketRepository.findById(0L)).thenReturn(Optional.of(testTicketEntity));
+        Ticket ticket = jpaTicketService.findById(0L);
+        assertThat(ticket.getId()).isSameAs(testTicket.getId());
+        assertThat(ticket.getUuid()).isSameAs(testTicket.getUuid());
+        assertThat(ticket.getStatus()).isSameAs(testTicket.getStatus());
+        assertThat(ticket.getValidatedInBus()).isSameAs(testTicket.getValidatedInBus());
+        assertThat(ticket.getValidatedTime()).isSameAs(testTicket.getValidatedTime());
+        assertThat(ticket.getBoughtTime()).isSameAs(testTicket.getBoughtTime());
     }
 }

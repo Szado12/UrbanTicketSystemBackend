@@ -54,7 +54,7 @@ public class ApplicationUserController {
     public ResponseEntity<Object> getUserProfile(@RequestAttribute Long id) {
         User user = userRepository.findById(id).get();
         for (Ticket ticket: user.getTickets()) {
-            updateTicketValidity(ticket);
+            ticketRepository.updateValidity(ticket);
         }
         return new ResponseEntity<>(userRepository.findById(id), HttpStatus.OK);
     }
@@ -72,22 +72,5 @@ public class ApplicationUserController {
         User userToUpdate = userRepository.findById(id).get();
         userToUpdate.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         return new ResponseEntity<>(userRepository.save(userToUpdate), HttpStatus.OK);
-    }
-
-    private void updateTicketValidity(Ticket ticket) {
-        if (ticket.getStatus().equals(VALID.name())){
-            Duration duration = Duration.between(ticket.getValidatedTime(), LocalDateTime.now());
-            if (ticket.getType().getMinutesOfValidity() != 0) {
-                if (duration.toMinutes() > ticket.getType().getMinutesOfValidity())
-                    ticket.setStatus(INVALID.name());
-            } else if (ticket.getType().getDaysOfValidity() == 0) {
-                if (duration.toMinutes() > 90)
-                    ticket.setStatus(INVALID.name());
-            } else {
-                if (duration.toDays() > ticket.getType().getDaysOfValidity())
-                    ticket.setStatus(INVALID.name());
-            }
-            ticketRepository.save(ticket);
-        }
     }
 }
