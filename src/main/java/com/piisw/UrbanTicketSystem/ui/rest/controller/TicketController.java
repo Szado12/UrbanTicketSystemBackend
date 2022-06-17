@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.INVALID;
 import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.VALID;
@@ -40,71 +37,42 @@ public class TicketController {
 
     @GetMapping("/ticket")
     public ResponseEntity<Object> getTicket(@RequestParam String ticketUuid) {
-        Ticket ticket = ticketRepository.findByUuid(ticketUuid);
-        ticketRepository.updateValidity(ticket);
         return new ResponseEntity<>(ticketRepository.findByUuid(ticketUuid), HttpStatus.OK);
     }
 
     @PostMapping("/ticket")
     public ResponseEntity<Object> buyTicket(@RequestAttribute Long id, @RequestParam long ticketTypeId) {
-        Ticket ticket = new Ticket();
-        ticket.setUuid(UUID.randomUUID().toString().substring(0,8));
-        ticket.setStatus(TicketStatus.BOUGHT.toString());
-        ticket.setBoughtTime(LocalDateTime.now());
-        ticket.setType(ticketTypeRepository.getById(ticketTypeId));
-        Ticket boughtTicket = ticketRepository.save(ticket);
-        User buyingUser = userRepository.findById(id).get();
-        return new ResponseEntity<>(userRepository.addTicket(buyingUser, boughtTicket), HttpStatus.CREATED);
+        return new ResponseEntity<>(userRepository.addTicket(id, ticketTypeId), HttpStatus.CREATED);
     }
 
     @PostMapping("/tickets")
-    public ResponseEntity<Object> buyTicket(@RequestAttribute Long id, @RequestBody TicketsRequest ticketsRequest) {
+    public ResponseEntity<Object> buyTickets(@RequestAttribute Long id, @RequestBody TicketsRequest ticketsRequest) {
         List<Long> ticketTypeIds = ticketsRequest.getTicketTypeIds();
         List<Long> ticketTypeCounts = ticketsRequest.getTicketTypeCounts();
         if (ticketTypeIds.size() != ticketTypeCounts.size())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        List<Ticket> boughtTickets = new ArrayList<>();
-        for (int i = 0; i < ticketTypeIds.size(); i++) {
-            for (int j = 0; j < ticketTypeCounts.get(i); j++) {
-                Ticket ticket = new Ticket();
-                ticket.setUuid(UUID.randomUUID().toString().substring(0,8));
-                ticket.setStatus(TicketStatus.BOUGHT.toString());
-                ticket.setBoughtTime(LocalDateTime.now());
-                ticket.setType(ticketTypeRepository.getById(ticketTypeIds.get(i)));
-                Ticket boughtTicket = ticketRepository.save(ticket);
-                User buyingUser = userRepository.findById(id).get();
-                boughtTickets.add(userRepository.addTicket(buyingUser, boughtTicket));
-            }
-        }
-        return new ResponseEntity<>(boughtTickets, HttpStatus.CREATED);
+        return new ResponseEntity<>(userRepository.addTickets(id, ticketTypeIds, ticketTypeCounts), HttpStatus.CREATED);
     }
 
     @PutMapping("/ticket/validate")
     public ResponseEntity<Object> validateTicket(@RequestBody TicketDetails ticketDetails) {
         try {
-            Ticket ticketToValidate = ticketRepository.findByUuid(ticketDetails.getTicketUuid());
-            if (ticketToValidate.getStatus().equals(VALID.name()))
+            String ticketUuid = ticketDetails.getTicketUuid();
+            int validatedInBus = ticketDetails.getValidatedInBus();
+            Optional<Ticket> validatedTicket = ticketRepository.validateTicket(ticketUuid, validatedInBus);
+            if (validatedTicket.isPresent())
+                return new ResponseEntity<>(validatedTicket.get(), HttpStatus.OK);
+            else
                 return new ResponseEntity<>("Ticket already validated", HttpStatus.BAD_REQUEST);
-            ticketToValidate.setValidatedInBus(ticketDetails.getValidatedInBus());
-            ticketToValidate.setStatus(VALID.name());
-            ticketToValidate.setValidatedTime(LocalDateTime.now());
-            return new ResponseEntity<>(ticketRepository.save(ticketToValidate), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("No value present", HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/ticket/check")
-    public ResponseEntity<Object> getTicket(@RequestBody TicketDetails ticketDetails) {
-        Ticket ticket = ticketRepository.findByUuid(ticketDetails.getTicketUuid());
-        TicketValidityResponse ticketValidityResponse = new TicketValidityResponse(false, false);
-        ticketValidityResponse.setReduced(ticket.getType().isReduced());
-        ticketRepository.updateValidity(ticket);
-        if (ticket.getStatus().equals(VALID.name())) {
-            ticketValidityResponse.setValid(true);
-            if (ticketDetails.getValidatedInBus() != ticket.getValidatedInBus())
-                ticketValidityResponse.setValid(false);
-        }
-        return new ResponseEntity<>(ticketValidityResponse, HttpStatus.OK);
+    public ResponseEntity<Object> checkTicketValidity(@RequestBody TicketDetails ticketDetails) {
+        String ticketUuid = ticketDetails.getTicketUuid();
+        int validatedInBus = ticketDetails.getValidatedInBus();
+        return new ResponseEntity<>(ticketRepository.checkTicketValidity(ticketUuid, validatedInBus), HttpStatus.OK);
     }
 }

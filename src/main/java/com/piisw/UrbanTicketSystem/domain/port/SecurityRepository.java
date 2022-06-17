@@ -5,4 +5,5 @@ import com.piisw.UrbanTicketSystem.domain.model.UserRole;
 
 public interface SecurityRepository {
     User registerUser(User user, UserRole role);
+    User updateUserCredentials(Long id, User updatedUser);
 }

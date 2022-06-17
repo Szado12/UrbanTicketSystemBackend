@@ -83,6 +83,7 @@ public class TicketServiceTests {
         testTicketEntity.setValidatedTime(time);
 
         when(jpaTicketRepository.findByUuid(uuid)).thenReturn(Optional.of(testTicketEntity));
+        when(jpaTicketRepository.save(any(TicketEntity.class))).thenReturn(testTicketEntity);
         Ticket ticket = jpaTicketService.findByUuid(uuid);
         assertThat(ticket.getId()).isSameAs(testTicket.getId());
         assertThat(ticket.getUuid()).isSameAs(testTicket.getUuid());
@@ -113,6 +114,7 @@ public class TicketServiceTests {
         testTicketEntity.setValidatedTime(time);
 
         when(jpaTicketRepository.findById(0L)).thenReturn(Optional.of(testTicketEntity));
+        when(jpaTicketRepository.save(any(TicketEntity.class))).thenReturn(testTicketEntity);
         Ticket ticket = jpaTicketService.findById(0L);
         assertThat(ticket.getId()).isSameAs(testTicket.getId());
         assertThat(ticket.getUuid()).isSameAs(testTicket.getUuid());

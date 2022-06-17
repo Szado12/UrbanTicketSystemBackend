@@ -3,16 +3,20 @@ package com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter;
 import com.piisw.UrbanTicketSystem.domain.model.Ticket;
 import com.piisw.UrbanTicketSystem.domain.model.TicketCategory;
 import com.piisw.UrbanTicketSystem.domain.model.TicketType;
+import com.piisw.UrbanTicketSystem.domain.model.request.TicketValidityResponse;
 import com.piisw.UrbanTicketSystem.domain.port.TicketRepository;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketCategoryEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketTypeEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaTicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.INVALID;
@@ -29,12 +33,16 @@ public class JpaTicketService implements TicketRepository {
 
     @Override
     public Ticket findById(long id) {
-        return mapTicketEntityToTicket(jpaTicketRepository.findById(id).get());
+        Ticket ticket = mapTicketEntityToTicket(jpaTicketRepository.findById(id).get());
+        updateValidity(ticket);
+        return save(ticket);
     }
 
     @Override
     public Ticket findByUuid(String uuid) {
-        return mapTicketEntityToTicket(jpaTicketRepository.findByUuid(uuid).get());
+        Ticket ticket = mapTicketEntityToTicket(jpaTicketRepository.findByUuid(uuid).get());
+        updateValidity(ticket);
+        return save(ticket);
     }
 
     @Override
@@ -58,6 +66,31 @@ public class JpaTicketService implements TicketRepository {
             }
         }
         return save(ticket);
+    }
+
+    @Override
+    public Optional<Ticket> validateTicket(String ticketUuid, int validatedInBus) {
+        Ticket ticketToValidate = findByUuid(ticketUuid);
+        if (ticketToValidate.getStatus().equals(VALID.name()))
+            return Optional.empty();
+        ticketToValidate.setValidatedInBus(validatedInBus);
+        ticketToValidate.setStatus(VALID.name());
+        ticketToValidate.setValidatedTime(LocalDateTime.now());
+        return Optional.ofNullable(save(ticketToValidate));
+    }
+
+    @Override
+    public TicketValidityResponse checkTicketValidity(String ticketUuid, int validatedInBus) {
+        TicketValidityResponse ticketValidityResponse = new TicketValidityResponse(false, false);
+        Ticket ticket = findByUuid(ticketUuid);
+        ticketValidityResponse.setReduced(ticket.getType().isReduced());
+        updateValidity(ticket);
+        if (ticket.getStatus().equals(VALID.name())) {
+            ticketValidityResponse.setValid(true);
+            if (validatedInBus != ticket.getValidatedInBus())
+                ticketValidityResponse.setValid(false);
+        }
+        return ticketValidityResponse;
     }
 
     private Ticket mapTicketEntityToTicket(TicketEntity ticketEntity) {

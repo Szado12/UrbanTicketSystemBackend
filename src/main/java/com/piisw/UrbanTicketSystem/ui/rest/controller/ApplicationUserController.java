@@ -61,16 +61,11 @@ public class ApplicationUserController {
 
     @PutMapping("/profile/data")
     public ResponseEntity<Object> updateUserData(@RequestAttribute Long id, @RequestBody User updatedUser) {
-        User userToUpdate = userRepository.findById(id).get();
-        userToUpdate.setName(updatedUser.getName());
-        userToUpdate.setSurname(updatedUser.getSurname());
-        return new ResponseEntity<>(userRepository.save(userToUpdate), HttpStatus.OK);
+        return new ResponseEntity<>(userRepository.updateUserData(id, updatedUser), HttpStatus.OK);
     }
 
     @PutMapping("/profile/password")
     public ResponseEntity<Object> updateUserPassword(@RequestAttribute Long id, @RequestBody User updatedUser) {
-        User userToUpdate = userRepository.findById(id).get();
-        userToUpdate.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        return new ResponseEntity<>(userRepository.save(userToUpdate), HttpStatus.OK);
+        return new ResponseEntity<>(securityRepository.updateUserCredentials(id, updatedUser), HttpStatus.OK);
     }
 }

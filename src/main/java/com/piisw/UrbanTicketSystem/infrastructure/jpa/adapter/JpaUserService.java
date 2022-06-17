@@ -1,33 +1,37 @@
 package com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter;
 
 import com.piisw.UrbanTicketSystem.domain.model.*;
+import com.piisw.UrbanTicketSystem.domain.port.TicketRepository;
+import com.piisw.UrbanTicketSystem.domain.port.TicketTypeRepository;
 import com.piisw.UrbanTicketSystem.domain.port.UserRepository;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketCategoryEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketTypeEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.UserEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaUserRepository;
-import javassist.NotFoundException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.UUID;
 
 @Service
 public class JpaUserService implements UserRepository {
     private final JpaUserRepository userRepository;
 
+    private final TicketRepository ticketRepository;
+
+    private final TicketTypeRepository ticketTypeRepository;
+
     @Autowired
-    public JpaUserService(JpaUserRepository userRepository) {
+    public JpaUserService(JpaUserRepository userRepository, TicketRepository ticketRepository, TicketTypeRepository ticketTypeRepository) {
         this.userRepository = userRepository;
+        this.ticketRepository = ticketRepository;
+        this.ticketTypeRepository = ticketTypeRepository;
     }
 
     @SneakyThrows
@@ -48,15 +52,41 @@ public class JpaUserService implements UserRepository {
     }
 
     @Override
+    public User updateUserData(Long id, User updatedUser) {
+        User userToUpdate = findById(id).get();
+        userToUpdate.setName(updatedUser.getName());
+        userToUpdate.setSurname(updatedUser.getSurname());
+        return save(userToUpdate);
+    }
+
+    @Override
     public User save(User user) {
         return mapEntityToUser(userRepository.save(mapUserToEntity(user)));
     }
 
     @Override
-    public Ticket addTicket(User user, Ticket ticket) {
-        user.getTickets().add(ticket);
+    public Ticket addTicket(Long userId, Long ticketTypeId) {
+        Ticket ticket = new Ticket();
+        ticket.setUuid(UUID.randomUUID().toString().substring(0,8));
+        ticket.setStatus(TicketStatus.BOUGHT.toString());
+        ticket.setBoughtTime(LocalDateTime.now());
+        ticket.setType(ticketTypeRepository.getById(ticketTypeId));
+        Ticket boughtTicket = ticketRepository.save(ticket);
+        User user = findById(userId).get();
+        user.getTickets().add(boughtTicket);
         userRepository.save(mapUserToEntity(user));
-        return ticket;
+        return boughtTicket;
+    }
+
+    @Override
+    public List<Ticket> addTickets(Long userId, List<Long> ticketTypeIds, List<Long> ticketTypeCounts) {
+        List<Ticket> boughtTickets = new ArrayList<>();
+        for (int i = 0; i < ticketTypeIds.size(); i++) {
+            for (int j = 0; j < ticketTypeCounts.get(i); j++) {
+                boughtTickets.add(addTicket(userId, ticketTypeIds.get(i)));
+            }
+        }
+        return boughtTickets;
     }
 
     private User mapEntityToUser(UserEntity userEntity) {

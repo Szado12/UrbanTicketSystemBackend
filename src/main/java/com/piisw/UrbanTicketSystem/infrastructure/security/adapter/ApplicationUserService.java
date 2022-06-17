@@ -62,4 +62,11 @@ public class ApplicationUserService implements UserDetailsService, SecurityRepos
 
         return userRepository.save(newUser);
     }
+
+    @Override
+    public User updateUserCredentials(Long id, User updatedData) {
+        User userToUpdate = userRepository.findById(id).get();
+        userToUpdate.setPassword(passwordEncoder.encode(updatedData.getPassword()));
+        return userRepository.save(userToUpdate);
+    }
 }
