@@ -2,13 +2,16 @@ package com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter;
 
 import com.piisw.UrbanTicketSystem.domain.model.Ticket;
 import com.piisw.UrbanTicketSystem.domain.model.TicketCategory;
+import com.piisw.UrbanTicketSystem.domain.model.TicketStatus;
 import com.piisw.UrbanTicketSystem.domain.model.TicketType;
 import com.piisw.UrbanTicketSystem.domain.model.request.TicketValidityResponse;
 import com.piisw.UrbanTicketSystem.domain.port.TicketRepository;
+import com.piisw.UrbanTicketSystem.domain.port.TicketTypeRepository;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketCategoryEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketTypeEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaTicketRepository;
+import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaTicketTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,8 @@ import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.VALID;
 @Service
 public class JpaTicketService implements TicketRepository {
     private JpaTicketRepository jpaTicketRepository;
+
+    private TicketTypeRepository ticketTypeRepository;
 
     @Autowired
     public JpaTicketService(JpaTicketRepository jpaTicketRepository) {
@@ -48,6 +53,16 @@ public class JpaTicketService implements TicketRepository {
     @Override
     public Ticket save(Ticket ticket) {
         return mapTicketEntityToTicket(jpaTicketRepository.save(mapTicketToTicketEntity(ticket)));
+    }
+
+    @Override
+    public Ticket buyTicket(Long ticketTypeId) {
+        Ticket ticket = new Ticket();
+        ticket.setUuid(UUID.randomUUID().toString().substring(0,8));
+        ticket.setStatus(TicketStatus.BOUGHT.toString());
+        ticket.setBoughtTime(LocalDateTime.now());
+        ticket.setType(ticketTypeRepository.getById(ticketTypeId));
+        return save(ticket);
     }
 
     @Override
@@ -92,6 +107,8 @@ public class JpaTicketService implements TicketRepository {
         }
         return ticketValidityResponse;
     }
+
+
 
     private Ticket mapTicketEntityToTicket(TicketEntity ticketEntity) {
         if (ticketEntity == null)

@@ -123,4 +123,19 @@ public class TicketServiceTests {
         assertThat(ticket.getValidatedTime()).isSameAs(testTicket.getValidatedTime());
         assertThat(ticket.getBoughtTime()).isSameAs(testTicket.getBoughtTime());
     }
+
+    @Test
+    public void shouldValidateTicket() {
+        //TODO
+    }
+
+    @Test
+    public void shouldUpdateTicketValidity() {
+        //TODO
+    }
+
+    @Test
+    public void shouldReturnTicketValidity() {
+        //TODO
+    }
 }

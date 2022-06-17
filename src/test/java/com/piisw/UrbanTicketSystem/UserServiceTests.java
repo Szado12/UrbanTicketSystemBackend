@@ -109,4 +109,19 @@ public class UserServiceTests {
         when(jpaUserRepository.existsByUsername(username)).thenReturn(true);
         assert(jpaUserService.existsByUsername(username));
     }
+
+    @Test
+    public void shouldUpdateUserData() {
+        //TODO
+    }
+
+    @Test
+    public void shoouldAddTicketToUser() {
+        //TODO
+    }
+
+    @Test
+    public void shouldAddTicketsToUser() {
+        //TODO
+    }
 }

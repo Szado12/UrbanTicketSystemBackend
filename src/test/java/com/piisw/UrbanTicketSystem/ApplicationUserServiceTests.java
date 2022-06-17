@@ -69,4 +69,9 @@ public class ApplicationUserServiceTests {
         assertThat(createdUser.getRole()).isSameAs(String.valueOf(UserRole.CLIENT));
         assertThat(createdUser.isActive()).isSameAs(true);
     }
+
+    @Test
+    public void shouldUpdateUserCredentials() {
+        //TODO
+    }
 }

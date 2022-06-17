@@ -25,13 +25,10 @@ public class JpaUserService implements UserRepository {
 
     private final TicketRepository ticketRepository;
 
-    private final TicketTypeRepository ticketTypeRepository;
-
     @Autowired
-    public JpaUserService(JpaUserRepository userRepository, TicketRepository ticketRepository, TicketTypeRepository ticketTypeRepository) {
+    public JpaUserService(JpaUserRepository userRepository, TicketRepository ticketRepository) {
         this.userRepository = userRepository;
         this.ticketRepository = ticketRepository;
-        this.ticketTypeRepository = ticketTypeRepository;
     }
 
     @SneakyThrows
@@ -66,12 +63,7 @@ public class JpaUserService implements UserRepository {
 
     @Override
     public Ticket addTicket(Long userId, Long ticketTypeId) {
-        Ticket ticket = new Ticket();
-        ticket.setUuid(UUID.randomUUID().toString().substring(0,8));
-        ticket.setStatus(TicketStatus.BOUGHT.toString());
-        ticket.setBoughtTime(LocalDateTime.now());
-        ticket.setType(ticketTypeRepository.getById(ticketTypeId));
-        Ticket boughtTicket = ticketRepository.save(ticket);
+        Ticket boughtTicket = ticketRepository.buyTicket(ticketTypeId);
         User user = findById(userId).get();
         user.getTickets().add(boughtTicket);
         userRepository.save(mapUserToEntity(user));

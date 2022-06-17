@@ -10,6 +10,7 @@ public interface TicketRepository {
     Ticket findById(long id);
     Ticket findByUuid(String uuid);
     Ticket save(Ticket ticket);
+    Ticket buyTicket(Long ticketTypeId);
     Ticket updateValidity(Ticket ticket);
     Optional<Ticket> validateTicket(String ticketUuid, int validatedInBus);
     TicketValidityResponse checkTicketValidity(String ticketUuid, int validatedInBus);

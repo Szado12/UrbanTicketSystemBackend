@@ -80,4 +80,9 @@ public class TicketTypeServiceTests {
         assertThat(ticketType.getDisplayName()).isSameAs(testTicketType.getDisplayName());
         assertThat(ticketType.isReduced()).isSameAs(testTicketType.isReduced());
     }
+
+    @Test
+    public void shouldReturnAllTicketTypes() {
+        //TODO
+    }
 }
