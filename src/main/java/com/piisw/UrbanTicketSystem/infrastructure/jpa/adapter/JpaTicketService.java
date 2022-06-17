@@ -87,7 +87,7 @@ public class JpaTicketService implements TicketRepository {
         updateValidity(ticket);
         if (ticket.getStatus().equals(VALID.name())) {
             ticketValidityResponse.setValid(true);
-            if (ticket.getType().getCategory().equals("SINGLE_TICKET") && validatedInBus != ticket.getValidatedInBus())
+            if (ticket.getType().getCategory().getName().equals("SINGLE_TICKET") && validatedInBus != ticket.getValidatedInBus())
                 ticketValidityResponse.setValid(false);
         }
         return ticketValidityResponse;
