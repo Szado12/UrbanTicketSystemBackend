@@ -1,9 +1,11 @@
 package com.piisw.UrbanTicketSystem;
 
+import com.piisw.UrbanTicketSystem.domain.model.TicketCategory;
 import com.piisw.UrbanTicketSystem.domain.model.TicketType;
 import com.piisw.UrbanTicketSystem.domain.model.User;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter.JpaTicketTypeService;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter.JpaUserService;
+import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketCategoryEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketTypeEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.UserEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaTicketTypeRepository;
@@ -16,10 +18,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,6 +87,19 @@ public class TicketTypeServiceTests {
 
     @Test
     public void shouldReturnAllTicketTypes() {
-        //TODO
+        TicketTypeEntity testTicketTypeEntity1 = new TicketTypeEntity();
+        testTicketTypeEntity1.setId(0L);
+        TicketTypeEntity testTicketTypeEntity2 = new TicketTypeEntity();
+        testTicketTypeEntity2.setReduced(true);
+        testTicketTypeEntity2.setId(1L);
+        
+        List<TicketTypeEntity> ticketTypesEntitiesList = new ArrayList<TicketTypeEntity>();
+        ticketTypesEntitiesList.add(testTicketTypeEntity1);
+        ticketTypesEntitiesList.add(testTicketTypeEntity2);
+
+        doReturn(ticketTypesEntitiesList).when(jpaTicketTypeRepository).findAll();
+        List<TicketType> returnedTypes = jpaTicketTypeService.getAll();
+        assertThat(returnedTypes.get(0).getId()).isSameAs(testTicketTypeEntity1.getId());
+        assertThat(returnedTypes.get(1).getId()).isSameAs(testTicketTypeEntity2.getId());
     }
 }
