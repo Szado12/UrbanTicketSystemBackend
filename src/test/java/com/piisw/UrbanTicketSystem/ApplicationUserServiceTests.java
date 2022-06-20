@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -72,6 +73,18 @@ public class ApplicationUserServiceTests {
 
     @Test
     public void shouldUpdateUserCredentials() {
-        //TODO
+        String username = "user@gmail.com";
+        User testUser = new User();
+        testUser.setId(0L);
+        testUser.setUsername(username);
+        testUser.setPassword("1234");
+
+        User testUserUpdated = new User();
+        testUserUpdated.setPassword("12345");
+        when(userRepository.findById(0L)).thenReturn(Optional.of(testUser));
+        when(userRepository.save(any(User.class))).then(returnsFirstArg());
+        when(passwordEncoder.encode("12345")).thenReturn("12345");
+        User updatedUser = applicationUserService.updateUserCredentials(0L, testUserUpdated);
+        assertThat(updatedUser.getPassword()).isSameAs(testUserUpdated.getPassword());
     }
 }

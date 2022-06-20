@@ -92,7 +92,7 @@ public class TicketTypeServiceTests {
         TicketTypeEntity testTicketTypeEntity2 = new TicketTypeEntity();
         testTicketTypeEntity2.setReduced(true);
         testTicketTypeEntity2.setId(1L);
-        
+
         List<TicketTypeEntity> ticketTypesEntitiesList = new ArrayList<TicketTypeEntity>();
         ticketTypesEntitiesList.add(testTicketTypeEntity1);
         ticketTypesEntitiesList.add(testTicketTypeEntity2);
