@@ -21,31 +21,31 @@ import java.util.UUID;
 
 @Service
 public class JpaUserService implements UserRepository {
-    private final JpaUserRepository userRepository;
+    private final JpaUserRepository jpaUserRepository;
 
     private final TicketRepository ticketRepository;
 
     @Autowired
-    public JpaUserService(JpaUserRepository userRepository, TicketRepository ticketRepository) {
-        this.userRepository = userRepository;
+    public JpaUserService(JpaUserRepository jpaUserRepository, TicketRepository ticketRepository) {
+        this.jpaUserRepository = jpaUserRepository;
         this.ticketRepository = ticketRepository;
     }
 
     @SneakyThrows
     @Override
     public Optional<User> findByUsername(String username) {
-        return Optional.ofNullable(mapEntityToUser(userRepository.findByUsername(username).orElse(null)));
+        return Optional.ofNullable(mapEntityToUser(jpaUserRepository.findByUsername(username).orElse(null)));
     }
 
     @SneakyThrows
     @Override
     public Optional<User> findById(Long id) {
-        return Optional.ofNullable(mapEntityToUser(userRepository.findById(id).orElse(null)));
+        return Optional.ofNullable(mapEntityToUser(jpaUserRepository.findById(id).orElse(null)));
     }
 
     @Override
     public Boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+        return jpaUserRepository.existsByUsername(username);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class JpaUserService implements UserRepository {
 
     @Override
     public User save(User user) {
-        return mapEntityToUser(userRepository.save(mapUserToEntity(user)));
+        return mapEntityToUser(jpaUserRepository.save(mapUserToEntity(user)));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class JpaUserService implements UserRepository {
         Ticket boughtTicket = ticketRepository.buyTicket(ticketTypeId);
         User user = findById(userId).get();
         user.getTickets().add(boughtTicket);
-        userRepository.save(mapUserToEntity(user));
+        jpaUserRepository.save(mapUserToEntity(user));
         return boughtTicket;
     }
 
