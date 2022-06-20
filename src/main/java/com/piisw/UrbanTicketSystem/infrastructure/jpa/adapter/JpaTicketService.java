@@ -11,10 +11,7 @@ import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketCategoryEntity
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketTypeEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaTicketRepository;
-import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaTicketTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -32,8 +29,9 @@ public class JpaTicketService implements TicketRepository {
     private TicketTypeRepository ticketTypeRepository;
 
     @Autowired
-    public JpaTicketService(JpaTicketRepository jpaTicketRepository) {
+    public JpaTicketService(JpaTicketRepository jpaTicketRepository, TicketTypeRepository ticketTypeRepository) {
         this.jpaTicketRepository = jpaTicketRepository;
+        this.ticketTypeRepository = ticketTypeRepository;
     }
 
     @Override
