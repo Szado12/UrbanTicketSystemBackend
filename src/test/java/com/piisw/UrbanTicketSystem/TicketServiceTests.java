@@ -1,14 +1,21 @@
 package com.piisw.UrbanTicketSystem;
 
 import com.piisw.UrbanTicketSystem.domain.model.Ticket;
+import com.piisw.UrbanTicketSystem.domain.model.TicketCategory;
+import com.piisw.UrbanTicketSystem.domain.model.TicketType;
 import com.piisw.UrbanTicketSystem.domain.model.User;
+import com.piisw.UrbanTicketSystem.domain.model.request.TicketValidityResponse;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter.JpaTicketService;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter.JpaTicketTypeService;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.adapter.JpaUserService;
+import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketCategoryEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketEntity;
+import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.TicketTypeEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.model.UserEntity;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaTicketRepository;
 import com.piisw.UrbanTicketSystem.infrastructure.jpa.repository.JpaUserRepository;
+import org.apache.tomcat.jni.Local;
+import org.hibernate.mapping.Any;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,7 +27,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.INVALID;
+import static com.piisw.UrbanTicketSystem.domain.model.TicketStatus.VALID;
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -33,9 +43,7 @@ public class TicketServiceTests {
     @Mock
     JpaTicketRepository jpaTicketRepository;
 
-    @Test
-    public void shouldReturnTicketOnSave() {
-        LocalDateTime time = LocalDateTime.now();
+    private Ticket testTicket(LocalDateTime time) {
         Ticket testTicket = new Ticket();
         testTicket.setId(0L);
         testTicket.setStatus("BOUGHT");
@@ -43,7 +51,11 @@ public class TicketServiceTests {
         testTicket.setUuid("UUID");
         testTicket.setBoughtTime(time);
         testTicket.setValidatedTime(time);
+        testTicket.setType(new TicketType(0L, 123, true, new TicketCategory(0L, "TIME_TICKET"),60, 0, "NAME"));
+        return testTicket;
+    }
 
+    private TicketEntity testTicketEntity(LocalDateTime time) {
         TicketEntity testTicketEntity = new TicketEntity();
         testTicketEntity.setId(0L);
         testTicketEntity.setTicketStatus("BOUGHT");
@@ -51,6 +63,15 @@ public class TicketServiceTests {
         testTicketEntity.setUuid("UUID");
         testTicketEntity.setBoughtTime(time);
         testTicketEntity.setValidatedTime(time);
+        testTicketEntity.setType(new TicketTypeEntity(0L, 123, true, "NAME", new TicketCategoryEntity(0L, "TIME_TICKET"),60, 0));
+        return testTicketEntity;
+    }
+
+    @Test
+    public void shouldReturnTicketOnSave() {
+        LocalDateTime time = LocalDateTime.now();
+        Ticket testTicket = testTicket(time);
+        TicketEntity testTicketEntity = testTicketEntity(time);
 
         when(jpaTicketRepository.save(any(TicketEntity.class))).thenReturn(testTicketEntity);
         Ticket ticket = jpaTicketService.save(testTicket);
@@ -64,23 +85,10 @@ public class TicketServiceTests {
 
     @Test
     public void shouldReturnTicketByUuid() {
-        LocalDateTime time = LocalDateTime.now();
         String uuid = "UUID";
-        Ticket testTicket = new Ticket();
-        testTicket.setId(0L);
-        testTicket.setStatus("BOUGHT");
-        testTicket.setValidatedInBus(0);
-        testTicket.setUuid(uuid);
-        testTicket.setBoughtTime(time);
-        testTicket.setValidatedTime(time);
-
-        TicketEntity testTicketEntity = new TicketEntity();
-        testTicketEntity.setId(0L);
-        testTicketEntity.setTicketStatus("BOUGHT");
-        testTicketEntity.setValidatedInBus(0);
-        testTicketEntity.setUuid(uuid);
-        testTicketEntity.setBoughtTime(time);
-        testTicketEntity.setValidatedTime(time);
+        LocalDateTime time = LocalDateTime.now();
+        Ticket testTicket = testTicket(time);
+        TicketEntity testTicketEntity = testTicketEntity(time);
 
         when(jpaTicketRepository.findByUuid(uuid)).thenReturn(Optional.of(testTicketEntity));
         when(jpaTicketRepository.save(any(TicketEntity.class))).thenReturn(testTicketEntity);
@@ -96,22 +104,8 @@ public class TicketServiceTests {
     @Test
     public void shouldReturnTicketById() {
         LocalDateTime time = LocalDateTime.now();
-        String uuid = "UUID";
-        Ticket testTicket = new Ticket();
-        testTicket.setId(0L);
-        testTicket.setStatus("BOUGHT");
-        testTicket.setValidatedInBus(0);
-        testTicket.setUuid(uuid);
-        testTicket.setBoughtTime(time);
-        testTicket.setValidatedTime(time);
-
-        TicketEntity testTicketEntity = new TicketEntity();
-        testTicketEntity.setId(0L);
-        testTicketEntity.setTicketStatus("BOUGHT");
-        testTicketEntity.setValidatedInBus(0);
-        testTicketEntity.setUuid(uuid);
-        testTicketEntity.setBoughtTime(time);
-        testTicketEntity.setValidatedTime(time);
+        Ticket testTicket = testTicket(time);
+        TicketEntity testTicketEntity = testTicketEntity(time);
 
         when(jpaTicketRepository.findById(0L)).thenReturn(Optional.of(testTicketEntity));
         when(jpaTicketRepository.save(any(TicketEntity.class))).thenReturn(testTicketEntity);
@@ -126,16 +120,42 @@ public class TicketServiceTests {
 
     @Test
     public void shouldValidateTicket() {
-        //TODO
+        LocalDateTime time = LocalDateTime.now();
+        Ticket testTicket = testTicket(time);
+        TicketEntity testTicketEntity = testTicketEntity(time);
+
+        when(jpaTicketRepository.findByUuid(any(String.class))).thenReturn(Optional.of(testTicketEntity));
+        when(jpaTicketRepository.save(any(TicketEntity.class))).then(returnsFirstArg());
+
+        Ticket validatedTicket = jpaTicketService.validateTicket("UUID", 123).get();
+        assertThat(validatedTicket.getStatus()).isSameAs(VALID.name());
+        assertThat(validatedTicket.getValidatedInBus()).isSameAs(123);
     }
 
     @Test
     public void shouldUpdateTicketValidity() {
-        //TODO
+        LocalDateTime time = LocalDateTime.now();
+        Ticket testTicket = testTicket(time);
+        testTicket.setStatus(VALID.name());
+        testTicket.setValidatedTime(time.minusHours(2));
+
+        when(jpaTicketRepository.save(any(TicketEntity.class))).then(returnsFirstArg());
+        Ticket updatedTicket = jpaTicketService.updateValidity(testTicket);
+        assertThat(updatedTicket.getStatus()).isSameAs(INVALID.name());
     }
 
     @Test
     public void shouldReturnTicketValidity() {
-        //TODO
+        LocalDateTime time = LocalDateTime.now();
+        Ticket testTicket = testTicket(time);
+        testTicket.setStatus(VALID.name());
+        TicketEntity testTicketEntity = testTicketEntity(time);
+        testTicketEntity.setTicketStatus(VALID.name());
+
+        when(jpaTicketRepository.findByUuid(any(String.class))).thenReturn(Optional.of(testTicketEntity));
+        when(jpaTicketRepository.save(any(TicketEntity.class))).then(returnsFirstArg());
+        TicketValidityResponse ticketValidityResponse = jpaTicketService.checkTicketValidity("UUID", 123);
+        assert(ticketValidityResponse.isValid());
+        assert(ticketValidityResponse.isReduced());
     }
 }
